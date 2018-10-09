@@ -11,14 +11,12 @@ For more info check out the CodeSandbox page: https://codesandbox.io/s/github/lm
 Example:
 
 ```js
-import 'regenerator-runtime/runtime';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
   Provider,
   connect
-} from './react-behavioral';
+} from 'react-behavioral';
 
 function* Button() {
   this.updateView(
