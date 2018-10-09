@@ -1,5 +1,3 @@
-import 'regenerator-runtime/runtime';
-
 import React from 'react';
 import BProgram from './bp.js';
 
