@@ -1,5 +1,13 @@
 # react-behavioral
 
+To install:
+
+```js
+yarn add react-behavioral
+```
+
+For more info check out the CodeSandbox page: https://codesandbox.io/s/github/lmatteis/react-behavioral
+
 Example:
 
 ```js
