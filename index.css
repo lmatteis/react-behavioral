@@ -1,0 +1,31 @@
+body,
+html {
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+#content {
+  text-align: left;
+  font-size: 2rem;
+  white-space: pre;
+}
+button {
+  color: black;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 1rem;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  margin-top: 15px;
+  padding: 12px 10px 10px;
+}
+
+textarea {
+  width: 400px;
+  font-size: 1rem;
+  height: 50px;
+}
+textarea#log {
+  height: 100px;
+}
