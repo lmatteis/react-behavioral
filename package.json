@@ -1,8 +1,11 @@
 {
   "name": "react-behavioral",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "#BehavioralProgramming for React",
-  "main": "./lib/index.js",
+  "main": "lib",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "start": "parcel index.html --open",
     "build": "parcel build index.html",
