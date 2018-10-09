@@ -1,11 +1,12 @@
 {
   "name": "react-behavioral",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.html",
+  "version": "1.0.1",
+  "description": "#BehavioralProgramming for React",
+  "main": "./lib/index.js",
   "scripts": {
     "start": "parcel index.html --open",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "lib": "parcel build ./src/react-behavioral/index.js --out-dir ./lib"
   },
   "dependencies": {
     "react": "16.4.1",
@@ -15,6 +16,9 @@
   "devDependencies": {
     "@types/react": "16.4.14",
     "@types/react-dom": "16.0.8",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "parcel-bundler": "^1.6.1"
   },
   "keywords": []
