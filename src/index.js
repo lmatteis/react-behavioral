@@ -2,10 +2,7 @@ import 'regenerator-runtime/runtime';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-  Provider,
-  connect
-} from './react-behavioral';
+import { Provider, connect } from './react-behavioral';
 
 function* Button() {
   this.updateView(
@@ -14,7 +11,7 @@ function* Button() {
         this.request('BUTTON_CLICKED', 'ciao');
       }}
     >
-      Click me!
+      Click me twice!
     </button>
   );
   yield {
