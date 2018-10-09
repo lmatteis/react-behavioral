@@ -3,18 +3,18 @@ html {
   height: 100%;
   flex-direction: column;
   justify-content: center;
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: 'Liberation Mono', Menlo,
+    Courier, monospace;
 }
 #content {
   text-align: left;
-  font-size: 2rem;
-  white-space: pre;
+  font-size: 1rem;
 }
 button {
   color: black;
   border-radius: 6px;
   background-color: white;
-  font-size: 1rem;
+  font-size: 0.8rem;
   letter-spacing: 1.2px;
   cursor: pointer;
   margin-top: 15px;
