@@ -2,7 +2,10 @@ import 'regenerator-runtime/runtime';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider, connect } from './react-behavioral';
+import {
+  Provider,
+  connect
+} from './src/react-behavioral';
 
 function* Button() {
   this.updateView(

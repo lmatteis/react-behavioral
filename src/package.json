@@ -1,0 +1,22 @@
+{
+  "name": "react-behavioral",
+  "version": "1.0.6",
+  "description": "#BehavioralProgramming for React",
+  "main": "lib",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html",
+    "lib": "parcel build ./react-behavioral/index.js --out-dir ./lib"
+  },
+  "devDependencies": {
+    "@types/react": "16.4.14",
+    "@types/react-dom": "16.0.8",
+    "react": "16.4.1",
+    "react-dom": "16.4.1",
+    "regenerator-runtime": "0.12.0"
+  },
+  "keywords": []
+}

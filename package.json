@@ -1,7 +1,7 @@
 {
-  "name": "react-behavioral",
-  "version": "1.0.5",
-  "description": "#BehavioralProgramming for React",
+  "name": "react-behavioral-example",
+  "version": "1.0.0",
+  "description": "#BehavioralProgramming example for React",
   "main": "lib",
   "files": [
     "lib"
