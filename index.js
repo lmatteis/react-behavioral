@@ -430,9 +430,9 @@ function* enforcePlayerTurns() {
       </Wrapper>
     </Provider>
     <p>
-      Try adding two X's in a row. Doesn't work! It's waiting for
-      an O, and once that is triggered it waits for an X and so
-      on. Isn't that freaking amazing?
+      Try adding two X's in a row. It will not work. It's waiting
+      for an O, and once that is triggered it waits for an X and
+      so on.
     </p>
   </React.Fragment>,
   document.getElementById('content')
