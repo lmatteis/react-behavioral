@@ -286,7 +286,7 @@ ReactDOM.render(
       and we'd tell them that we can draw Xs and Os on this
       board. Try clicking on the board yourself;
       shift-click to draw Os. On the right we have a
-      cronological view of the log of events as they
+      chronological view of the log of events as they
       happen.
     </p>
     <Provider>
@@ -358,7 +358,7 @@ function* detectWinByX() {
       `}</pre>
     </p>
     <p>
-      Here were are introducing the 3 main critical pillers
+      Here were are introducing the 3 main critical pillars
       of Behavioral Programming; the{' '}
       <span style={{ color: 'blue' }}>request</span>,{' '}
       <span style={{ color: 'green' }}>wait</span> and{' '}
@@ -384,8 +384,8 @@ function* detectWinByX() {
     <p>
       Finally, and more importantly, when a{' '}
       <span style={{ color: 'red' }}>block</span> is
-      yielded, other b-threads are forbidded to trigger
-      such event.
+      yielded, other b-threads are forbid to trigger such
+      event.
     </p>
     <p>
       These 3 magical operators can also be combined
@@ -395,7 +395,7 @@ function* detectWinByX() {
       aborting the request when the wait event happens.
     </p>
     <p>
-      There are other semantics surronding these 3
+      There are other semantics surrounding these 3
       operators, but they are crucial to the functioning of
       Behavioral Programming, hence the official image from
       the paper is needed:
@@ -592,19 +592,19 @@ function* stopGameAfterWin() {
     <h2>Programming the strategy</h2>
     <p>
       So far we programmed the <b>basic rules</b> for the
-      game. We shaped and scuplted the behavior
+      game. We shaped and sculpted the behavior
       incrementally, in a way that didn't require us to go
       back into already-written code to figure out
       state-based cases and change them accordingly to
-      accomodate the new behavior.
+      accommodate the new behavior.
     </p>
     <p>
       Instead we programmed in a <i>scenario-based</i>{' '}
       fashion (a scenario being a b-thread) which seems to
       be much more natural. As a consequence of this, state
-      is actually implicit rather than excplit and not once
-      we had to worry about iterating over cells in state.
-      In fact state is nowhere to be found.
+      is actually implicit rather than explicit and not
+      once we had to worry about iterating over cells in
+      state. In fact state is nowhere to be found.
     </p>
     <p>
       Next we'll move into programming strategy for the
