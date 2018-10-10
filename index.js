@@ -65,7 +65,7 @@ function* ReactCell() {
 
 const Cell = connect(ReactCell)
 
-function* DetectWins() {
+const DetectWins = connect(function*() {
   yield {
     wait: ['X']
   }
@@ -78,7 +78,7 @@ function* DetectWins() {
   yield {
     request: ['XWins']
   }
-}
+})
 
 const ShowWins = connect(function*() {
   yield {
@@ -168,7 +168,7 @@ ReactDOM.render(
       We'll start coding our first b-thread which is aligned
       with our requirement of <b>DetectWins</b>:
       <div>
-        <Provider threads={[DetectWins]}>
+        <Provider>
           <Cell idx={0} /> <Cell idx={1} /> <Cell idx={2} />{' '}
           <br />
           <Cell idx={3} /> <Cell idx={4} /> <Cell idx={5} />{' '}
@@ -176,6 +176,7 @@ ReactDOM.render(
           <Cell idx={6} /> <Cell idx={7} /> <Cell idx={8} />{' '}
           <br />
           <ShowWins />
+          <DetectWins />
         </Provider>
       </div>
     </p>

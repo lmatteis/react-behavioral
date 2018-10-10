@@ -1,41 +1,45 @@
-import React from 'react';
-import BProgram from './bp.js';
+import React from 'react'
+import BProgram from './bp.js'
 
 const {
   Provider: ReactProvider,
   Consumer
-} = React.createContext({});
+} = React.createContext({})
 
 export const Provider = class extends React.Component {
   constructor(props) {
-    super(props);
-    this.bp = new BProgram();
+    super(props)
+    this.bp = new BProgram()
 
-    const threads = this.props.threads || [];
-    let pr = 1;
-    this.bp.run();
+    const threads = this.props.threads || []
+    let pr = 1
+    this.bp.run()
 
     threads.forEach(thread =>
       this.bp.addBThread(``, pr++, thread.bind(this))
-    );
+    )
   }
   render() {
     return (
       <ReactProvider value={this.bp}>
         {this.props.children}
       </ReactProvider>
-    );
+    )
   }
-};
+}
 
 class ComponentWithThread extends React.Component {
-  state = { view: null };
+  state = { view: null }
   componentDidMount() {
     // Context value is this.props.bp
-    const { bp, thread } = this.props;
-    bp.addBThread('dispatch', 1, thread.bind(this));
-    bp.run();
-    this.bp = bp;
+    const { bp, thread, priority } = this.props
+    bp.addBThread(
+      'dispatch',
+      priority || 1,
+      thread.bind(this)
+    )
+    bp.run()
+    this.bp = bp
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -43,13 +47,13 @@ class ComponentWithThread extends React.Component {
     // New Context value is this.props.bp
   }
 
-  updateView = view => this.setState({ view });
+  updateView = view => this.setState({ view })
   request = (event, payload) =>
-    this.props.bp.event(event, payload);
+    this.props.bp.event(event, payload)
 
   render() {
     // const { component: Component } = this.props;
-    return this.state.view;
+    return this.state.view
   }
 }
 
@@ -65,6 +69,6 @@ export function connect(thread) {
           />
         )}
       </Consumer>
-    );
-  };
+    )
+  }
 }
