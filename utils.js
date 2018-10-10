@@ -27,13 +27,18 @@ export const matchAny = (inputEvent, [x1, x2, x3]) => (
   cellNumber
 ) =>
   event === inputEvent &&
-  (cellNumber === x1 || cellNumber === x2 || cellNumber === x3);
+  (cellNumber === x1 ||
+    cellNumber === x2 ||
+    cellNumber === x3);
 
 export function* allCells() {
-  const values = [0, 1, 2];
-  for (var i = 0; i < values.length; i++) {
-    for (var y = 0; y < values.length; y++) {
-      yield [i, y];
-    }
-  }
+  yield 0;
+  yield 1;
+  yield 2;
+  yield 3;
+  yield 4;
+  yield 5;
+  yield 6;
+  yield 7;
+  yield 8;
 }
