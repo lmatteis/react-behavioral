@@ -65,6 +65,28 @@ function* ReactCell() {
 
 const Cell = connect(ReactCell)
 
+function* DetectWins() {
+  yield {
+    wait: ['X']
+  }
+  yield {
+    wait: ['X']
+  }
+  yield {
+    wait: ['X']
+  }
+  yield {
+    request: ['XWins']
+  }
+}
+
+const ShowWins = connect(function*() {
+  yield {
+    wait: ['XWins', 'OWins']
+  }
+  this.updateView(this.bp.lastEvent)
+})
+
 ReactDOM.render(
   <React.Fragment>
     <h2>react-behavioral</h2>
@@ -131,8 +153,9 @@ ReactDOM.render(
     <p>
       Let's continue teaching the human (or computer) about
       how the game should work. We want to detect when a
-      line of Xs or Os has been filled. Essentially we're
-      looking for a trace of events of this kind:
+      line of Xs or Os has been filled, and request a Win.
+      Essentially we're looking for a trace of events of
+      this kind:
       <pre>
         {`
 { type: 'X', payload: 0 }
@@ -141,6 +164,22 @@ ReactDOM.render(
         `}
       </pre>
     </p>
+    <p>
+      We'll start coding our first b-thread which is aligned
+      with our requirement of <b>DetectWins</b>:
+      <div>
+        <Provider threads={[DetectWins]}>
+          <Cell idx={0} /> <Cell idx={1} /> <Cell idx={2} />{' '}
+          <br />
+          <Cell idx={3} /> <Cell idx={4} /> <Cell idx={5} />{' '}
+          <br />
+          <Cell idx={6} /> <Cell idx={7} /> <Cell idx={8} />{' '}
+          <br />
+          <ShowWins />
+        </Provider>
+      </div>
+    </p>
+    <p>Foo</p>
   </React.Fragment>,
   document.getElementById('content')
 )
