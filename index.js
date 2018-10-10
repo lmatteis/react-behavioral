@@ -50,8 +50,32 @@ const threads = [
   }
 ];
 
+function* ReactCell() {
+  const { idx } = this.props;
+  this.updateView(
+    <button
+      onClick={e => {
+        if (e.shiftKey) {
+          return this.request(`O_${idx}`);
+        }
+        this.request(`X_${idx}`);
+      }}
+    />
+  );
+  yield {
+    wait: [`X_${idx}`, `O_${idx}`]
+  };
+  this.updateView(
+    <button>
+      {this.bp.lastEvent.split('_')[0]}
+    </button>
+  );
+}
+
+const Cell = connect(ReactCell);
+
 ReactDOM.render(
-  <Provider threads={threads}>
+  <React.Fragment>
     <h2>react-behavioral</h2>
     <pre>yarn add react-behavioral</pre>
     <p>
@@ -90,9 +114,30 @@ ReactDOM.render(
       is a library, specifically targeted at
       React, that implements this paradigm.
     </p>
-    <div>
-      <ButtonContainer />
-    </div>
-  </Provider>,
+    <h3>TicTacToe Example</h3>
+    <p>
+      To guide you through an example let's
+      imagine that we wanted to teach a person
+      how to play the TicTacToe game.
+    </p>
+    <p>
+      We'd first start by showing the board to
+      the person and we'd tell them that we
+      can draw Xs and Os on this board (try
+      clicking on the board yourself;
+      shift-click to draw Os):
+      <div>
+        <Provider>
+          <Cell idx={0} /> <Cell idx={1} />{' '}
+          <Cell idx={2} /> <br />
+          <Cell idx={3} /> <Cell idx={4} />{' '}
+          <Cell idx={5} /> <br />
+          <Cell idx={6} /> <Cell idx={7} />{' '}
+          <Cell idx={8} /> <br />
+        </Provider>
+      </div>
+    </p>
+    <div>To guide you through</div>
+  </React.Fragment>,
   document.getElementById('content')
 );
