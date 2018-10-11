@@ -67,7 +67,7 @@ const Log = connect(function*() {
     yield {
       wait: [() => true]
     };
-    if (this.bp.lastPayload) {
+    if (this.bp.lastPayload !== undefined) {
       log.push(
         `{ type: "${this.bp.lastEvent}", payload: ${
           this.bp.lastPayload
