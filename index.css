@@ -5,17 +5,17 @@ html {
   width: 500px;
   margin: auto;
   justify-content: center;
-  font-family: 'Liberation Mono', Menlo, Courier,
-    monospace;
+  font-family: 'Liberation Mono', Menlo, Courier, monospace;
 }
 #content {
   text-align: left;
   font-size: 1rem;
+  margin-bottom: 40px;
 }
 img {
   display: block;
-  width: 70%;
   margin: auto;
+  width: 100%;
 }
 button {
   color: black;
