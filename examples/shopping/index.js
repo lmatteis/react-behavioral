@@ -14,14 +14,19 @@ export default () => (
       the most critical pain points that arise during
       the development of a complex system.
       Specifically I will explore through the
-      development of a shopping app, that are current
+      development of a shopping app, that our current
       methods are ineffective when modeling a system
-      that constantly changes. As a result we need to
-      take a more radical approach that changes how we
-      think of software development: have the
-      computers adapt to how humans generally think
-      about systems, rather than having humans adapt
-      to how computers work.
+      that (i) constantly changes, and (ii) has a
+      variety of people working on it that come and
+      go. As a system becomes more complex it becomes
+      inevitably harder to maintain and modify. As a
+      result we will ask ourselves: can changes to the
+      system not depend on its complexity? In other
+      words: can me implement new features without
+      having to worry about how badly the system was
+      built? We will explore the answer to this
+      question using #BehavioralProgramming (aka
+      scenario-based programming).
     </small>
     <pre>
       <a href="https://twitter.com/lmatteis">
