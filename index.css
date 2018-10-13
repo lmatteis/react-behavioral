@@ -5,7 +5,8 @@ html {
   width: 500px;
   margin: auto;
   justify-content: center;
-  font-family: 'Liberation Mono', Menlo, Courier, monospace;
+  font-family: 'Liberation Mono', Menlo, Courier,
+    monospace;
 }
 #content {
   text-align: left;
