@@ -9,7 +9,9 @@ export default () => (
       shopping application
     </h2>
     <pre>
-      <a href="https://twitter.com/lmatteis">@lmatteis</a>
+      <a href="https://twitter.com/lmatteis">
+        Luca Matteis
+      </a>
     </pre>
     <small>
       <strong>Abstract. </strong>
@@ -25,7 +27,7 @@ export default () => (
       ourselves: can changes to the system not depend on its
       complexity? In other words: how easily can we
       implement new features without having to worry about
-      how badly the system was built? We wdfill explore the
+      how badly the system was built? We will explore the
       answer to this question using a paradigm named
       "Behavioral Programming" (aka scenario-based
       programming).
