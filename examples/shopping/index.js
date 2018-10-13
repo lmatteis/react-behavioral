@@ -22,10 +22,10 @@ export default () => (
       inevitably harder to maintain and modify. As a
       result we will ask ourselves: can changes to the
       system not depend on its complexity? In other
-      words: can me implement new features without
+      words: how easily can we implement new features without
       having to worry about how badly the system was
       built? We will explore the answer to this
-      question using #BehavioralProgramming (aka
+      question using a paradigm named "Behavioral Programming" (aka
       scenario-based programming).
     </small>
     <pre>
