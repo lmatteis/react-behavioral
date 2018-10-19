@@ -216,11 +216,15 @@ const preventCompletionOfLineWithTwoXs = generateThreads(
       yield {
         wait: [eventFn]
       };
-      line = line.filter(n => n !== this.lastEvent.payload);
+      line = line.filter(
+        n => n !== this.lastEvent().payload
+      );
       yield {
         wait: [eventFn]
       };
-      line = line.filter(n => n !== this.lastEvent.payload);
+      line = line.filter(
+        n => n !== this.lastEvent().payload
+      );
 
       // Request an O
       yield {
@@ -749,11 +753,11 @@ const preventCompletionOfLineWithTwoXs = generateThreads(
       yield {
         wait: [eventFn]
       };
-      line = line.filter(n => n !== this.lastEvent.payload);
+      line = line.filter(n => n !== this.lastEvent().payload);
       yield {
         wait: [eventFn]
       };
-      line = line.filter(n => n !== this.lastEvent.payload);
+      line = line.filter(n => n !== this.lastEvent().payload);
 
       // Request an O
       yield {

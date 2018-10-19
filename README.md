@@ -31,7 +31,9 @@ function* Button() {
   yield {
     wait: ['SHOW_HELLO_WORLD']
   };
-  this.updateView('Hello world: ' + this.lastEvent.payload);
+  this.updateView(
+    'Hello world: ' + this.lastEvent().payload
+  );
 }
 const ButtonContainer = connect(Button);
 
@@ -44,7 +46,7 @@ const threads = [
       request: [
         {
           type: 'SHOW_HELLO_WORLD',
-          payload: this.lastEvent.payload
+          payload: this.lastEvent().payload
         }
       ]
     };

@@ -48,8 +48,7 @@ class ComponentWithThread extends React.Component {
   }
 
   updateView = view => this.setState({ view });
-  request = (event, payload) =>
-    this.props.bp.event(event, payload);
+  request = event => this.props.bp.request(event);
   lastEvent = () => this.props.bp.lastEvent;
 
   render() {

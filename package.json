@@ -12,6 +12,7 @@
     "lib": "parcel build ./src/react-behavioral/index.js --out-dir ./lib"
   },
   "dependencies": {
+    "behavioral": "1.0.2",
     "react": "16.4.1",
     "react-dom": "16.4.1",
     "regenerator-runtime": "0.12.0"
