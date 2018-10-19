@@ -1,10 +1,7 @@
 import 'regenerator-runtime/runtime';
 
 import React from 'react';
-import {
-  Provider,
-  connect
-} from '../../src/react-behavioral';
+import { Provider, connect } from 'react-behavioral';
 
 import {
   allLines,
