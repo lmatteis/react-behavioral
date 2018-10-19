@@ -22,14 +22,18 @@ export function* allLines() {
   yield [2, 4, 6];
 }
 
-export const matchAny = (inputEvent, [x1, x2, x3]) => (
-  event,
-  cellNumber
-) =>
-  event === inputEvent &&
-  (cellNumber === x1 ||
-    cellNumber === x2 ||
-    cellNumber === x3);
+export const matchAny = (
+  inputEvent,
+  [x1, x2, x3]
+) => event => {
+  const cellNumber = event.payload;
+  return (
+    event.type === inputEvent &&
+    (cellNumber === x1 ||
+      cellNumber === x2 ||
+      cellNumber === x3)
+  );
+};
 
 export function* allCells() {
   yield 0;

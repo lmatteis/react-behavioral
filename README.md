@@ -13,16 +13,16 @@ Example:
 ```js
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-  Provider,
-  connect
-} from 'react-behavioral';
+import { Provider, connect } from 'react-behavioral';
 
 function* Button() {
   this.updateView(
     <button
       onClick={() => {
-        this.request('BUTTON_CLICKED', 'ciao');
+        this.request({
+          type: 'BUTTON_CLICKED',
+          payload: 'ciao'
+        });
       }}
     >
       Click me!
@@ -31,9 +31,7 @@ function* Button() {
   yield {
     wait: ['SHOW_HELLO_WORLD']
   };
-  this.updateView(
-    'Hello world: ' + this.bp.lastPayload
-  );
+  this.updateView('Hello world: ' + this.lastEvent.payload);
 }
 const ButtonContainer = connect(Button);
 
@@ -43,8 +41,12 @@ const threads = [
       wait: ['BUTTON_CLICKED']
     };
     yield {
-      request: ['SHOW_HELLO_WORLD'],
-      payload: this.bp.lastPayload
+      request: [
+        {
+          type: 'SHOW_HELLO_WORLD',
+          payload: this.lastEvent.payload
+        }
+      ]
     };
   },
   function* doubleClick() {

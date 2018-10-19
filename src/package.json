@@ -1,6 +1,6 @@
 {
   "name": "react-behavioral",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "#BehavioralProgramming for React",
   "main": "lib",
   "files": [
@@ -17,5 +17,8 @@
     "babel-preset-stage-0": "^6.24.1",
     "parcel-bundler": "^1.6.1"
   },
-  "keywords": []
+  "keywords": [],
+  "dependencies": {
+    "behavioral": "^1.0.0"
+  }
 }
