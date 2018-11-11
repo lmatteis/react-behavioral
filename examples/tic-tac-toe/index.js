@@ -234,7 +234,11 @@ export default () => (
   <React.Fragment>
     <h2>react-behavioral</h2>
     <pre>
-      <a href="https://twitter.com/lmatteis">@lmatteis</a>
+      October 10, 2018
+      <br />
+      <a href="https://twitter.com/lmatteis">
+        Luca Matteis
+      </a>
     </pre>
     <p>
       <a href="https://twitter.com/search?q=%23BehavioralProgramming">
@@ -866,7 +870,7 @@ const Cell = connect(ReactCell);
       </Board>
       <Log />
     </Wrapper>
-  </Provider>  
+  </Provider>
 `}
       </pre>
     </p>
