@@ -4,12 +4,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import TicTacToeGame from './examples/tic-tac-toe';
-import Shopping from './examples/shopping/index';
+import Bakery from './examples/bakery/index';
 
 ReactDOM.render(
   <React.Fragment>
-    {window.location.pathname === '/shopping' ? (
-      <Shopping />
+    {window.location.pathname === '/bakery' ? (
+      <Bakery />
     ) : (
       <TicTacToeGame />
     )}
