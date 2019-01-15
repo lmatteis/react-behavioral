@@ -4,21 +4,34 @@ import React from 'react';
 
 import Thermometer from 'react-thermometer-component';
 
-function Oven() {
+function Oven({ id, onChange }) {
   return (
     <div>
-      <div style={{ fontSize: '8px' }}>
-        <input type="radio" name="switch" value="off" /> Off
+      <div
+        style={{
+          fontSize: '8px'
+        }}
+      >
         <input
           type="radio"
-          name="switch"
+          name={id}
+          value="off"
+          onChange={onChange}
+          checked
+        />{' '}
+        Off
+        <input
+          type="radio"
+          name={id}
           value="medium"
+          onChange={onChange}
         />{' '}
         Medium
         <input
           type="radio"
-          name="switch"
+          name={id}
           value="high"
+          onChange={onChange}
         />{' '}
         High
       </div>
@@ -37,10 +50,25 @@ function Oven() {
 
 function Bakery({ children }) {
   return (
-    <div style={{ display: 'flex' }}>
-      <Oven />
-      <Oven />
-      <Oven />
+    <div>
+      <label>
+        On/Off<input
+          type="checkbox"
+          name="checkbox"
+          value="value"
+        />
+      </label>
+
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-around'
+        }}
+      >
+        <Oven id={1} />
+        <Oven id={2} />
+        <Oven id={3} />
+      </div>
     </div>
   );
 }
@@ -65,18 +93,23 @@ export default () => (
       library.
     </p>
     <p>
-      If you haven't already seen the{' '}
-      <a href="/">TicTacToe example</a> built with
-      react-behavioral and showcasing how Behavioral
-      Programming works more in detail, I suggest you check
-      it out.
+      Behavioral Programming is a paradigm that allows us to
+      program in a way that is aligned with requirements.
+      Moreover it is incremental in nature, where newly
+      added code can modify how old code behaves. Because of
+      this we can add features and change the system at hand
+      without having to see or care about how old code is
+      implemented. This is why I decided to explain this
+      paradigm in a way which I call "append-only
+      development". For more info on the details of how
+      Behavioral Programming works please check the{' '}
+      <a href="/">TicTacToe example</a>.
     </p>
     <p>
-      Rather than concentrating on various aspects of the
-      app we will focus all our attention on the behavior:
-      when I click this button, this should appear and these
-      3 other things should happen which in turn also make
-      this other thing happen.
+      We will start with a basic app, and slowly add
+      behavior to it and change how it works. Every time we
+      do this we will never have access to already-written
+      code.
     </p>
     <p>
       Here's how the app currently looks. It's entirely
