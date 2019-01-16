@@ -57,6 +57,38 @@ class ComponentWithThread extends React.Component {
   }
 }
 
+class ComponentPropsWithThread extends React.Component {
+  state = { props: null };
+  componentDidMount() {
+    // Context value is this.props.bp
+    const { bp, thread, priority } = this.props;
+    bp.addBThread(
+      'dispatch',
+      priority || 1,
+      thread.bind(this)
+    );
+    bp.run();
+    this.bp = bp;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // Previous Context value is prevProps.bp
+    // New Context value is this.props.bp
+  }
+
+  // updateView = view => this.setState({ view });
+  setProps = props =>
+    console.log(props) || this.setState({ props });
+  request = event => this.props.bp.request(event);
+  lastEvent = () => this.props.bp.lastEvent;
+
+  render() {
+    const { component: Component } = this.props;
+    const { props } = this.state;
+    return <Component {...props} />;
+  }
+}
+
 export function connect(thread) {
   return function(props) {
     return (
@@ -70,5 +102,24 @@ export function connect(thread) {
         )}
       </Consumer>
     );
+  };
+}
+
+export function connectProps(thread) {
+  return function(Component) {
+    return function(props) {
+      return (
+        <Consumer>
+          {bp => (
+            <ComponentPropsWithThread
+              {...props}
+              thread={thread}
+              bp={bp}
+              component={Component}
+            />
+          )}
+        </Consumer>
+      );
+    };
   };
 }
