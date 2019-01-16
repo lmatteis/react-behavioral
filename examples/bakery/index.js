@@ -1,8 +1,42 @@
 import 'regenerator-runtime/runtime';
 
 import React from 'react';
+import { Provider, connect } from 'react-behavioral';
 
 import Thermometer from 'react-thermometer-component';
+const Log = connect(function*() {
+  const style = {
+    float: 'right',
+    width: '200px',
+    height: '160px',
+    marginRight: '-200px'
+  };
+  this.updateView(<textarea id="log" style={style} />);
+  const log = [];
+
+  while (true) {
+    yield {
+      wait: [() => true]
+    };
+    if (this.lastEvent().payload !== undefined) {
+      log.push(
+        `{ type: "${this.lastEvent().type}", payload: ${
+          this.lastEvent().payload
+        } }`
+      );
+    } else {
+      log.push(`{ type: "${this.lastEvent().type}" }`);
+    }
+
+    this.updateView(
+      <textarea
+        id="log"
+        style={style}
+        value={log.join('\n')}
+      />
+    );
+  }
+});
 
 function Oven({ id, onChange }) {
   return (
@@ -58,7 +92,66 @@ function Bakery({ children }) {
           value="value"
         />
       </label>
+      <input type="text" />
 
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-around'
+        }}
+      >
+        <Oven id={1} />
+        <Oven id={2} />
+        <Oven id={3} />
+      </div>
+    </div>
+  );
+}
+
+const OnOff = connect(function*() {
+  let checked = false;
+  while (true) {
+    this.updateView(
+      <label>
+        {checked ? 'On' : 'Off'}
+        <input
+          type="checkbox"
+          name="checkbox"
+          onChange={() =>
+            checked
+              ? this.request('TURN_OVEN_OFF')
+              : this.request('TURN_OVEN_ON')
+          }
+          checked={checked}
+        />
+      </label>
+    );
+    yield {
+      wait: ['TURN_OVEN_ON', 'TURN_OVEN_OFF']
+    };
+    checked = !checked;
+  }
+});
+const Display = connect(function*() {
+  while (true) {
+    this.updateView(<input type="text" />);
+    yield {
+      wait: ['TURN_OVEN_ON']
+    };
+    this.updateView(
+      <input type="text" style={{ background: 'green' }} />
+    );
+    yield {
+      wait: ['TURN_OVEN_OFF']
+    };
+  }
+});
+
+function Bakery2({ children }) {
+  return (
+    <div>
+      <OnOff />
+      <Display />
       <div
         style={{
           display: 'flex',
@@ -108,16 +201,38 @@ export default () => (
     <p>
       We will start with a basic app, and slowly add
       behavior to it and change how it works. Every time we
-      do this we will never have access to already-written
-      code.
+      do this we will mostly not have access to
+      already-written code. Hence this will allow us to
+      worry less about the readability or quality of our
+      code, and more on the intended behavior.
     </p>
     <p>
-      Here's how the app currently looks. It's entirely
+      Here's how the app currently looks. It is entirely
       "dormant" at this stage made simply of stateless React
       components.
     </p>
     <p>
       <Bakery />
     </p>
+    <p>
+      The ovens panel UI is rather basic: there's an On/Off
+      switch, a display for any information related to the
+      oven, and finally the temperature of each oven. Below
+      each oven temperature there's a warning light.
+    </p>
+    <p>
+      Let's suppose Ms. B., the owner of the bakery, wants
+      to add behavior to this UI and control and monitor the
+      ovens in a way that she desires. The first thing she
+      would like to happen is that whenever to "on" checkbox
+      is checked, the background of the display should turn
+      green. Moreover it should only display either On or
+      Off based on whether the checkbox is selected. Let us
+      do this using Behavioral Programming.
+    </p>
+    <Provider>
+      <Log />
+      <Bakery2 />
+    </Provider>
   </React.Fragment>
 );
