@@ -72,7 +72,14 @@ class ComponentPropsWithThread extends React.Component {
     bp.addBThread(``, pr++, function*() {
       while (true) {
         yield {
-          wait: [event => event.type === that]
+          wait: [
+            event => {
+              return (
+                event.setProps !== undefined &&
+                event.setProps === that
+              );
+            }
+          ]
         };
         that.setProps(that.lastEvent().payload);
       }

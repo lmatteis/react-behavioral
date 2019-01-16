@@ -147,11 +147,23 @@ const Display = connectProps(
       yield {
         wait: ['TURN_OVEN_ON']
       };
-      this.setProps({ style: { background: 'green' } });
+      yield {
+        request: {
+          type: 'UPDATE_GREEN',
+          setProps: this,
+          payload: { style: { background: 'green' } }
+        }
+      };
       yield {
         wait: ['TURN_OVEN_OFF']
       };
-      this.setProps({ style: { background: 'white' } });
+      yield {
+        request: {
+          type: 'UPDATE_WHITE',
+          setProps: this,
+          payload: { style: { background: 'white' } }
+        }
+      };
     }
   },
   function*() {
@@ -161,7 +173,8 @@ const Display = connectProps(
       };
       yield {
         request: {
-          type: this,
+          type: 'UPDATE_DISPLAY',
+          setProps: this,
           payload: { value: 'Oven is ON' }
         }
       };
@@ -174,7 +187,8 @@ const Display = connectProps(
       };
       yield {
         request: {
-          type: this,
+          type: 'UPDATE_DISPLAY',
+          setProps: this,
           payload: { value: '' }
         }
       };
@@ -187,8 +201,13 @@ const Display = connectProps(
       };
       yield {
         block: event =>
-          event.type === this &&
-          event.payload.value === 'Oven is ON'
+          event.type === 'UPDATE_DISPLAY' &&
+          event.payload.value === 'Oven is ON',
+        request: {
+          type: 'UPDATE_DISPLAY',
+          setProps: this,
+          payload: { value: 'ON' }
+        }
       };
     }
   }
