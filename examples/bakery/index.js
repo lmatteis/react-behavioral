@@ -1,7 +1,11 @@
 import 'regenerator-runtime/runtime';
 
 import React from 'react';
-import { Provider, connect } from 'react-behavioral';
+import {
+  Provider,
+  connect,
+  connectProps
+} from '../../src/react-behavioral';
 
 import Thermometer from 'react-thermometer-component';
 const Log = connect(function*() {
@@ -132,20 +136,23 @@ const OnOff = connect(function*() {
     checked = !checked;
   }
 });
-const Display = connect(function*() {
+
+function Input(props) {
+  return <input type="text" {...props} />;
+}
+
+const Display = connectProps(function*() {
   while (true) {
-    this.updateView(<input type="text" />);
     yield {
       wait: ['TURN_OVEN_ON']
     };
-    this.updateView(
-      <input type="text" style={{ background: 'green' }} />
-    );
+    this.setProps({ style: { background: 'green' } });
     yield {
       wait: ['TURN_OVEN_OFF']
     };
+    this.setProps({ style: { background: 'white' } });
   }
-});
+})(Input);
 
 function Bakery2({ children }) {
   return (
