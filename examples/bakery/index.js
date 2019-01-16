@@ -141,18 +141,36 @@ function Input(props) {
   return <input type="text" {...props} />;
 }
 
-const Display = connectProps(function*() {
-  while (true) {
-    yield {
-      wait: ['TURN_OVEN_ON']
-    };
-    this.setProps({ style: { background: 'green' } });
-    yield {
-      wait: ['TURN_OVEN_OFF']
-    };
-    this.setProps({ style: { background: 'white' } });
+const Display = connectProps(
+  function*() {
+    while (true) {
+      yield {
+        wait: ['TURN_OVEN_ON']
+      };
+      this.setProps({ style: { background: 'green' } });
+      yield {
+        wait: ['TURN_OVEN_OFF']
+      };
+      this.setProps({ style: { background: 'white' } });
+    }
+  },
+  function*() {
+    while (true) {
+      yield {
+        wait: ['TURN_OVEN_ON']
+      };
+      this.setProps({ value: 'TURN OVEN ON' });
+    }
+  },
+  function*() {
+    while (true) {
+      yield {
+        wait: ['TURN_OVEN_OFF']
+      };
+      this.setProps({ value: '' });
+    }
   }
-})(Input);
+)(Input);
 
 function Bakery2({ children }) {
   return (
