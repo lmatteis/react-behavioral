@@ -66,6 +66,18 @@ class ComponentPropsWithThread extends React.Component {
     threads.forEach(thread =>
       bp.addBThread(``, pr++, thread.bind(this))
     );
+
+    // SET_PROPS
+    let that = this;
+    bp.addBThread(``, pr++, function*() {
+      while (true) {
+        yield {
+          wait: [event => event.type === that]
+        };
+        that.setProps(that.lastEvent().payload);
+      }
+    });
+
     bp.run();
     this.bp = bp;
   }
