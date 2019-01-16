@@ -159,7 +159,12 @@ const Display = connectProps(
       yield {
         wait: ['TURN_OVEN_ON']
       };
-      this.setProps({ value: 'TURN OVEN ON' });
+      yield {
+        request: {
+          type: this,
+          payload: { value: 'Oven is ON' }
+        }
+      };
     }
   },
   function*() {
@@ -167,7 +172,24 @@ const Display = connectProps(
       yield {
         wait: ['TURN_OVEN_OFF']
       };
-      this.setProps({ value: '' });
+      yield {
+        request: {
+          type: this,
+          payload: { value: '' }
+        }
+      };
+    }
+  },
+  function*() {
+    while (true) {
+      yield {
+        wait: ['TURN_OVEN_ON']
+      };
+      yield {
+        block: event =>
+          event.type === this &&
+          event.payload.value === 'Oven is ON'
+      };
     }
   }
 )(Input);
