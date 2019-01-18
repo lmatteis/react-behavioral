@@ -6,6 +6,18 @@ const {
   Consumer
 } = React.createContext({});
 
+function request(e) {
+  const name = 'request ' + e;
+  var bt = function*() {
+    yield {
+      request: [e]
+    };
+  };
+  // XXX should be lowest priority (1 is highest)
+  this.addBThread(name, 1, bt);
+  this.run(); // Initiate super-step
+}
+
 export const Provider = class extends React.Component {
   constructor(props) {
     super(props);
@@ -16,9 +28,11 @@ export const Provider = class extends React.Component {
     this.bp.run();
 
     threads.forEach(thread =>
-      this.bp.addBThread(``, pr++, thread)
+      this.bp.addBThread(``, pr++, thread.bind(this))
     );
   }
+  request = event => request.call(this.bp, event);
+  lastEvent = () => this.bp.lastEvent;
   render() {
     return (
       <ReactProvider value={this.bp}>
@@ -48,7 +62,7 @@ class ComponentWithThread extends React.Component {
   }
 
   updateView = view => this.setState({ view });
-  request = event => this.props.bp.request(event);
+  request = event => request.call(this.props.bp, event);
   lastEvent = () => this.props.bp.lastEvent;
 
   render() {
@@ -80,7 +94,7 @@ class ComponentPropsWithThread extends React.Component {
 
   // updateView = view => this.setState({ view });
   setProps = this.setState;
-  request = event => this.props.bp.request(event);
+  request = event => request.call(this.props.bp, event);
   lastEvent = () => this.props.bp.lastEvent;
 
   render() {

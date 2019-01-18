@@ -13,7 +13,8 @@ const Log = connect(function*() {
     float: 'right',
     width: '200px',
     height: '160px',
-    marginRight: '-200px'
+    marginRight: '-200px',
+    fontSize: '10px'
   };
   this.updateView(<textarea id="log" style={style} />);
   const log = [];
@@ -59,12 +60,15 @@ const FlickeringDot = connectProps(
           background: '#7FFF00'
         }
       }));
+
       setTimeout(() => {
         this.request(id + 'SECOND_FLICKER');
-      }, 1000 + Math.floor(Math.random() * 5000));
+      }, 2000);
+
+      // THIRD_FLICKER happens before SECOND_FLICKER
       setTimeout(() => {
         this.request(id + 'THIRD_FLICKER');
-      }, 1000 + Math.floor(Math.random() * 5000));
+      }, 1000);
     }
   },
   function*() {
@@ -115,7 +119,7 @@ const FlickeringDot = connectProps(
   }
 )(Dot);
 
-function Oven({ id, onChange }) {
+function Oven({ id, onChange, children }) {
   return (
     <div
       style={{
@@ -162,10 +166,9 @@ function Oven({ id, onChange }) {
         size="large"
         height="300"
       />
-      <FlickeringDot
-        id={id}
-        style={{ marginTop: '30px' }}
-      />
+      {children || (
+        <Dot id={id} style={{ marginTop: '30px' }} />
+      )}
     </div>
   );
 }
@@ -292,18 +295,46 @@ function Bakery3({ children }) {
           justifyContent: 'space-around'
         }}
       >
-        <Oven id={1} />
-        <Oven id={2} />
-        <Oven id={3} />
+        <Oven id={1}>
+          <FlickeringDot
+            id={1}
+            style={{ marginTop: '30px' }}
+          />
+        </Oven>
+        <Oven id={2}>
+          <FlickeringDot
+            id={2}
+            style={{ marginTop: '30px' }}
+          />
+        </Oven>
+        <Oven id={3}>
+          <FlickeringDot
+            id={3}
+            style={{ marginTop: '30px' }}
+          />
+        </Oven>
       </div>
     </div>
   );
 }
 
 function* stabilizeFlickering() {
-  yield {
-    wait: []
-  };
+  while (true) {
+    yield {
+      wait: event => event.type.match('FIRST_FLICKER')
+    };
+    yield {
+      block: event => event.type.match('THIRD_FLICKER'),
+      wait: event => event.type.match('SECOND_FLICKER')
+    };
+    setTimeout(() => {
+      this.request('TIMER');
+    }, 1000);
+    yield {
+      block: event => event.type.match('THIRD_FLICKER'),
+      wait: 'TIMER'
+    };
+  }
 }
 export default () => (
   <React.Fragment>
