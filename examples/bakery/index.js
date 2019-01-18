@@ -42,12 +42,92 @@ const Log = connect(function*() {
   }
 });
 
+function Dot(props) {
+  return <span class="dot" {...props} />;
+}
+const FlickeringDot = connectProps(
+  function*() {
+    const { id } = this.props;
+    while (true) {
+      yield {
+        wait: ['TURN_OVEN_ON']
+      };
+      yield { request: id + 'FIRST_FLICKER' };
+      this.setProps(prevProps => ({
+        style: {
+          ...prevProps.style,
+          background: '#7FFF00'
+        }
+      }));
+      setTimeout(() => {
+        this.request(id + 'SECOND_FLICKER');
+      }, 1000 + Math.floor(Math.random() * 5000));
+      setTimeout(() => {
+        this.request(id + 'THIRD_FLICKER');
+      }, 1000 + Math.floor(Math.random() * 5000));
+    }
+  },
+  function*() {
+    const { id } = this.props;
+    while (true) {
+      yield { wait: id + 'SECOND_FLICKER' };
+      this.setProps(prevProps => ({
+        style: {
+          ...prevProps.style,
+          background: 'red'
+        }
+      }));
+    }
+  },
+  function*() {
+    const { id } = this.props;
+    while (true) {
+      yield { wait: id + 'THIRD_FLICKER' };
+      this.setProps(prevProps => ({
+        style: {
+          ...prevProps.style,
+          background: '#7FFF00'
+        }
+      }));
+    }
+  },
+  function*() {
+    const { id } = this.props;
+    while (true) {
+      yield {
+        wait: ['TURN_OVEN_OFF']
+      };
+      this.setProps(prevProps => ({
+        style: {
+          ...prevProps.style,
+          background: '#bbb'
+        }
+      }));
+      yield {
+        block: [
+          id + 'FIRST_FLICKER',
+          id + 'SECOND_FLICKER',
+          id + 'THIRD_FLICKER'
+        ],
+        wait: 'TURN_OVEN_ON'
+      };
+    }
+  }
+)(Dot);
+
 function Oven({ id, onChange }) {
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'column'
+      }}
+    >
       <div
         style={{
-          fontSize: '8px'
+          fontSize: '8px',
+          marginBottom: '20px'
         }}
       >
         <input
@@ -81,6 +161,10 @@ function Oven({ id, onChange }) {
         format="°C"
         size="large"
         height="300"
+      />
+      <FlickeringDot
+        id={id}
+        style={{ marginTop: '30px' }}
       />
     </div>
   );
@@ -147,23 +231,11 @@ const Display = connectProps(
       yield {
         wait: ['TURN_OVEN_ON']
       };
-      yield {
-        request: {
-          type: 'UPDATE_GREEN',
-          setProps: this,
-          payload: { style: { background: 'green' } }
-        }
-      };
+      this.setProps({ style: { background: '#7FFF00' } });
       yield {
         wait: ['TURN_OVEN_OFF']
       };
-      yield {
-        request: {
-          type: 'UPDATE_WHITE',
-          setProps: this,
-          payload: { style: { background: 'white' } }
-        }
-      };
+      this.setProps({ style: { background: 'white' } });
     }
   },
   function*() {
@@ -171,13 +243,7 @@ const Display = connectProps(
       yield {
         wait: ['TURN_OVEN_ON']
       };
-      yield {
-        request: {
-          type: 'UPDATE_DISPLAY',
-          setProps: this,
-          payload: { value: 'Oven is ON' }
-        }
-      };
+      this.setProps({ value: 'Oven is ON' });
     }
   },
   function*() {
@@ -185,30 +251,7 @@ const Display = connectProps(
       yield {
         wait: ['TURN_OVEN_OFF']
       };
-      yield {
-        request: {
-          type: 'UPDATE_DISPLAY',
-          setProps: this,
-          payload: { value: '' }
-        }
-      };
-    }
-  },
-  function*() {
-    while (true) {
-      yield {
-        wait: ['TURN_OVEN_ON']
-      };
-      yield {
-        block: event =>
-          event.type === 'UPDATE_DISPLAY' &&
-          event.payload.value === 'Oven is ON',
-        request: {
-          type: 'UPDATE_DISPLAY',
-          setProps: this,
-          payload: { value: 'ON' }
-        }
-      };
+      this.setProps({ value: '' });
     }
   }
 )(Input);
@@ -216,8 +259,11 @@ const Display = connectProps(
 function Bakery2({ children }) {
   return (
     <div>
-      <OnOff />
-      <Display />
+      <Log />
+      <div style={{ marginBottom: '20px' }}>
+        <OnOff />
+        <Display />
+      </div>
       <div
         style={{
           display: 'flex',
@@ -232,6 +278,33 @@ function Bakery2({ children }) {
   );
 }
 
+function Bakery3({ children }) {
+  return (
+    <div>
+      <Log />
+      <div style={{ marginBottom: '20px' }}>
+        <OnOff />
+        <Display />
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-around'
+        }}
+      >
+        <Oven id={1} />
+        <Oven id={2} />
+        <Oven id={3} />
+      </div>
+    </div>
+  );
+}
+
+function* stabilizeFlickering() {
+  yield {
+    wait: []
+  };
+}
 export default () => (
   <React.Fragment>
     <h2>Append-only development with React</h2>
@@ -277,9 +350,9 @@ export default () => (
       "dormant" at this stage made simply of stateless React
       components.
     </p>
-    <p>
+    <Provider>
       <Bakery />
-    </p>
+    </Provider>
     <p>
       The ovens panel UI is rather basic: there's an On/Off
       switch, a display for any information related to the
@@ -297,8 +370,16 @@ export default () => (
       do this using Behavioral Programming.
     </p>
     <Provider>
-      <Log />
       <Bakery2 />
+    </Provider>
+    <p>
+      Suppose that our user has just decided that when the
+      switch is turned on, the three warning lights should
+      flicker (by changing colors from green to red and
+      back) three times, terminating in green.
+    </p>
+    <Provider threads={[stabilizeFlickering]}>
+      <Bakery3 />
     </Provider>
   </React.Fragment>
 );

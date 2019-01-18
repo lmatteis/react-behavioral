@@ -58,7 +58,10 @@ class ComponentWithThread extends React.Component {
 }
 
 class ComponentPropsWithThread extends React.Component {
-  state = { props: null };
+  constructor(props) {
+    super(props);
+    this.state = props;
+  }
   componentDidMount() {
     // Context value is this.props.bp
     const { bp, threads, priority } = this.props;
@@ -66,25 +69,6 @@ class ComponentPropsWithThread extends React.Component {
     threads.forEach(thread =>
       bp.addBThread(``, pr++, thread.bind(this))
     );
-
-    // SET_PROPS
-    let that = this;
-    bp.addBThread(``, pr++, function*() {
-      while (true) {
-        yield {
-          wait: [
-            event => {
-              return (
-                event.setProps !== undefined &&
-                event.setProps === that
-              );
-            }
-          ]
-        };
-        that.setProps(that.lastEvent().payload);
-      }
-    });
-
     bp.run();
     this.bp = bp;
   }
@@ -95,17 +79,19 @@ class ComponentPropsWithThread extends React.Component {
   }
 
   // updateView = view => this.setState({ view });
-  setProps = props =>
-    this.setState(prevState => ({
-      props: { ...prevState.props, ...props }
-    }));
+  setProps = this.setState;
   request = event => this.props.bp.request(event);
   lastEvent = () => this.props.bp.lastEvent;
 
   render() {
-    const { component: Component } = this.props;
-    const { props } = this.state;
-    return <Component {...props} />;
+    const {
+      component: Component,
+      bp,
+      threads,
+      priority,
+      ...restProps
+    } = this.state;
+    return <Component {...restProps} />;
   }
 }
 
