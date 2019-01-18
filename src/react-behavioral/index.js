@@ -18,6 +18,15 @@ function request(e) {
   this.run(); // Initiate super-step
 }
 
+function bSync(obj) {
+  var bt = function*() {
+    yield obj;
+  };
+  // XXX should be lowest priority (1 is highest)
+  this.addBThread('', 1, bt);
+  this.run(); // Initiate super-step
+}
+
 export const Provider = class extends React.Component {
   constructor(props) {
     super(props);
@@ -32,6 +41,7 @@ export const Provider = class extends React.Component {
     );
   }
   request = event => request.call(this.bp, event);
+  bSync = event => bSync.call(this.bp, event);
   lastEvent = () => this.bp.lastEvent;
   render() {
     return (
@@ -63,6 +73,7 @@ class ComponentWithThread extends React.Component {
 
   updateView = view => this.setState({ view });
   request = event => request.call(this.props.bp, event);
+  bSync = event => bSync.call(this.props.bp, event);
   lastEvent = () => this.props.bp.lastEvent;
 
   render() {
@@ -95,6 +106,7 @@ class ComponentPropsWithThread extends React.Component {
   // updateView = view => this.setState({ view });
   setProps = this.setState;
   request = event => request.call(this.props.bp, event);
+  bSync = event => bSync.call(this.props.bp, event);
   lastEvent = () => this.props.bp.lastEvent;
 
   render() {

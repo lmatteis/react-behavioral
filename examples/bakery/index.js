@@ -53,7 +53,7 @@ const FlickeringDot = connectProps(
       yield {
         wait: ['TURN_OVEN_ON']
       };
-      yield { request: id + 'FIRST_FLICKER' };
+      yield { request: id + 'GREEN_LIGHT' };
       this.setProps(prevProps => ({
         style: {
           ...prevProps.style,
@@ -62,19 +62,25 @@ const FlickeringDot = connectProps(
       }));
 
       setTimeout(() => {
-        this.request(id + 'SECOND_FLICKER');
-      }, 2000);
+        this.bSync({
+          request: id + 'RED_LIGHT',
+          wait: 'TURN_OVEN_ON'
+        });
+      }, 500);
 
       // THIRD_FLICKER happens before SECOND_FLICKER
       setTimeout(() => {
-        this.request(id + 'THIRD_FLICKER');
+        this.bSync({
+          request: id + 'GREEN_LIGHT',
+          wait: 'TURN_OVEN_ON'
+        });
       }, 1000);
     }
   },
   function*() {
     const { id } = this.props;
     while (true) {
-      yield { wait: id + 'SECOND_FLICKER' };
+      yield { wait: id + 'RED_LIGHT' };
       this.setProps(prevProps => ({
         style: {
           ...prevProps.style,
@@ -86,7 +92,7 @@ const FlickeringDot = connectProps(
   function*() {
     const { id } = this.props;
     while (true) {
-      yield { wait: id + 'THIRD_FLICKER' };
+      yield { wait: id + 'GREEN_LIGHT' };
       this.setProps(prevProps => ({
         style: {
           ...prevProps.style,
@@ -108,11 +114,7 @@ const FlickeringDot = connectProps(
         }
       }));
       yield {
-        block: [
-          id + 'FIRST_FLICKER',
-          id + 'SECOND_FLICKER',
-          id + 'THIRD_FLICKER'
-        ],
+        block: [id + 'GREEN_LIGHT', id + 'RED_LIGHT'],
         wait: 'TURN_OVEN_ON'
       };
     }
@@ -409,7 +411,7 @@ export default () => (
       flicker (by changing colors from green to red and
       back) three times, terminating in green.
     </p>
-    <Provider threads={[stabilizeFlickering]}>
+    <Provider threads={[]}>
       <Bakery3 />
     </Provider>
   </React.Fragment>
