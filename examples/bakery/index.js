@@ -50,37 +50,7 @@ const FlickeringDot = connectProps(
   function*() {
     const { id } = this.props;
     while (true) {
-      yield {
-        wait: ['TURN_OVEN_ON']
-      };
-      yield { request: id + 'GREEN_LIGHT' };
-      this.setProps(prevProps => ({
-        style: {
-          ...prevProps.style,
-          background: '#7FFF00'
-        }
-      }));
-
-      setTimeout(() => {
-        this.bSync({
-          request: id + 'RED_LIGHT',
-          wait: 'TURN_OVEN_ON'
-        });
-      }, 500);
-
-      // THIRD_FLICKER happens before SECOND_FLICKER
-      setTimeout(() => {
-        this.bSync({
-          request: id + 'GREEN_LIGHT',
-          wait: 'TURN_OVEN_ON'
-        });
-      }, 1000);
-    }
-  },
-  function*() {
-    const { id } = this.props;
-    while (true) {
-      yield { wait: id + 'RED_LIGHT' };
+      yield { wait: 'RED_LIGHT' };
       this.setProps(prevProps => ({
         style: {
           ...prevProps.style,
@@ -92,7 +62,7 @@ const FlickeringDot = connectProps(
   function*() {
     const { id } = this.props;
     while (true) {
-      yield { wait: id + 'GREEN_LIGHT' };
+      yield { wait: 'GREEN_LIGHT' };
       this.setProps(prevProps => ({
         style: {
           ...prevProps.style,
@@ -102,26 +72,70 @@ const FlickeringDot = connectProps(
     }
   },
   function*() {
-    const { id } = this.props;
     while (true) {
-      yield {
-        wait: ['TURN_OVEN_OFF']
-      };
+      yield { wait: 'OFF_LIGHT' };
       this.setProps(prevProps => ({
         style: {
           ...prevProps.style,
           background: '#bbb'
         }
       }));
-      yield {
-        block: [id + 'GREEN_LIGHT', id + 'RED_LIGHT'],
-        wait: 'TURN_OVEN_ON'
-      };
     }
   }
 )(Dot);
 
-function Oven({ id, onChange, children }) {
+function Input(props) {
+  return <input {...props} />;
+}
+const Radio = connectProps(function*() {
+  this.setProps({
+    type: 'radio',
+    value: this.props.value,
+    onChange: () =>
+      this.request({
+        type: this.props.id + '_SET_' + this.props.value,
+        payload: this.props.value
+      }),
+    checked: this.props.value === 'off'
+  });
+  while (true) {
+    yield {
+      wait: event =>
+        event.type ===
+        this.props.id + '_SET_' + this.props.value
+    };
+    const payload = this.lastEvent().payload;
+    this.setProps({
+      checked: this.props.value === payload
+    });
+  }
+})(Input);
+
+function RadioBoxes({ id, onChange }) {
+  return (
+    <div
+      style={{
+        fontSize: '8px',
+        marginBottom: '20px'
+      }}
+    >
+      <label>
+        <Radio id={id} value="off" />
+        Off
+      </label>
+      <label>
+        <Radio id={id} value="medium" />
+        Medium
+      </label>
+      <label>
+        <Radio id={id} value="high" />
+        High
+      </label>
+    </div>
+  );
+}
+
+function Oven({ id, children }) {
   return (
     <div
       style={{
@@ -130,35 +144,7 @@ function Oven({ id, onChange, children }) {
         flexDirection: 'column'
       }}
     >
-      <div
-        style={{
-          fontSize: '8px',
-          marginBottom: '20px'
-        }}
-      >
-        <input
-          type="radio"
-          name={id}
-          value="off"
-          onChange={onChange}
-          checked
-        />{' '}
-        Off
-        <input
-          type="radio"
-          name={id}
-          value="medium"
-          onChange={onChange}
-        />{' '}
-        Medium
-        <input
-          type="radio"
-          name={id}
-          value="high"
-          onChange={onChange}
-        />{' '}
-        High
-      </div>
+      <RadioBoxes id={id} />
       <Thermometer
         theme="light"
         value="18"
@@ -319,25 +305,6 @@ function Bakery3({ children }) {
     </div>
   );
 }
-
-function* stabilizeFlickering() {
-  while (true) {
-    yield {
-      wait: event => event.type.match('FIRST_FLICKER')
-    };
-    yield {
-      block: event => event.type.match('THIRD_FLICKER'),
-      wait: event => event.type.match('SECOND_FLICKER')
-    };
-    setTimeout(() => {
-      this.request('TIMER');
-    }, 1000);
-    yield {
-      block: event => event.type.match('THIRD_FLICKER'),
-      wait: 'TIMER'
-    };
-  }
-}
 export default () => (
   <React.Fragment>
     <h2>Append-only development with React</h2>
@@ -411,7 +378,51 @@ export default () => (
       flicker (by changing colors from green to red and
       back) three times, terminating in green.
     </p>
-    <Provider threads={[]}>
+    <Provider
+      threads={[
+        function*() {
+          const { id } = this.props;
+          while (true) {
+            yield {
+              wait: ['TURN_OVEN_OFF']
+            };
+            yield { request: 'OFF_LIGHT' };
+            yield {
+              block: ['GREEN_LIGHT', 'RED_LIGHT'],
+              wait: 'TURN_OVEN_ON'
+            };
+          }
+        },
+        function*() {
+          const { id } = this.props;
+          while (true) {
+            yield {
+              wait: ['TURN_OVEN_ON']
+            };
+            yield { request: 'GREEN_LIGHT' };
+
+            let timeout = 0;
+            for (var i = 0; i < 3; i++) {
+              timeout += 200;
+              setTimeout(() => {
+                this.bSync({
+                  request: 'RED_LIGHT',
+                  wait: 'TURN_OVEN_ON'
+                });
+              }, timeout);
+
+              timeout += 200;
+              setTimeout(() => {
+                this.bSync({
+                  request: 'GREEN_LIGHT',
+                  wait: 'TURN_OVEN_ON'
+                });
+              }, timeout);
+            }
+          }
+        }
+      ]}
+    >
       <Bakery3 />
     </Provider>
   </React.Fragment>
