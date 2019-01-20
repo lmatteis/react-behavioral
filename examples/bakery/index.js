@@ -441,6 +441,31 @@ export default () => (
     <Provider
       threads={[
         function*() {
+          while (true) {
+            yield {
+              wait: 'TURN_OVEN_OFF'
+            };
+            yield {
+              request: {
+                type: '1_SET_TEMPERATURE',
+                payload: 'off'
+              }
+            };
+            yield {
+              request: {
+                type: '2_SET_TEMPERATURE',
+                payload: 'off'
+              }
+            };
+            yield {
+              request: {
+                type: '3_SET_TEMPERATURE',
+                payload: 'off'
+              }
+            };
+          }
+        },
+        function*() {
           const { id } = this.props;
           while (true) {
             yield {
