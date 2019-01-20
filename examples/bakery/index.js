@@ -87,53 +87,113 @@ const FlickeringDot = connectProps(
 function Input(props) {
   return <input {...props} />;
 }
-const Radio = connectProps(function*() {
-  this.setProps({
-    type: 'radio',
-    value: this.props.value,
-    onChange: () =>
-      this.request({
-        type: this.props.id + '_SET_' + this.props.value,
-        payload: this.props.value
-      }),
-    checked: this.props.value === 'off'
-  });
-  while (true) {
-    yield {
-      wait: event =>
-        event.type ===
-        this.props.id + '_SET_' + this.props.value
-    };
-    const payload = this.lastEvent().payload;
+const Radio = connectProps(
+  function*() {
     this.setProps({
-      checked: this.props.value === payload
-    });
-  }
-})(Input);
+      type: 'radio',
+      value: this.props.value,
+      onChange: () => {
+        this.request(this.props.id + 'CLEAR_RADIOS');
 
-function RadioBoxes({ id, onChange }) {
-  return (
-    <div
-      style={{
-        fontSize: '8px',
-        marginBottom: '20px'
-      }}
-    >
-      <label>
-        <Radio id={id} value="off" />
-        Off
-      </label>
-      <label>
-        <Radio id={id} value="medium" />
-        Medium
-      </label>
-      <label>
-        <Radio id={id} value="high" />
-        High
-      </label>
-    </div>
-  );
+        this.request({
+          type: this.props.id + '_SET_' + this.props.value,
+          payload: this.props.value
+        });
+      },
+      checked: this.props.value === 'off'
+    });
+  },
+  function*() {
+    while (true) {
+      yield {
+        wait: event =>
+          event.type ===
+          this.props.id + '_SET_' + this.props.value
+      };
+      const payload = this.lastEvent().payload;
+      this.setProps({
+        checked: this.props.value === payload
+      });
+    }
+  },
+  function*() {
+    while (true) {
+      yield {
+        wait: this.props.id + 'CLEAR_RADIOS'
+      };
+      console.log('false');
+      this.setProps({ checked: false });
+    }
+  }
+)(Input);
+
+class RadioBoxes extends React.Component {
+  state = { selectedOption: 'off' };
+  handleChange = event => {
+    this.props.onChange(event.target.value);
+  };
+  render() {
+    return (
+      <div
+        style={{
+          fontSize: '8px',
+          marginBottom: '20px'
+        }}
+      >
+        <label>
+          <input
+            type="radio"
+            value="off"
+            checked={this.props.selectedOption === 'off'}
+            onChange={this.handleChange}
+          />
+          Off
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="medium"
+            checked={this.props.selectedOption === 'medium'}
+            onChange={this.handleChange}
+          />
+          Medium
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="high"
+            checked={this.props.selectedOption === 'high'}
+            onChange={this.handleChange}
+          />
+          High
+        </label>
+      </div>
+    );
+  }
 }
+
+const RadioBoxesContainer = connectProps(
+  function*() {
+    this.setProps({
+      selectedOption: 'off',
+      onChange: value =>
+        this.request({
+          type: this.props.id + '_SET_TEMPERATURE',
+          payload: value
+        })
+    });
+  },
+  function*() {
+    while (true) {
+      yield {
+        wait: this.props.id + '_SET_TEMPERATURE'
+      };
+      this.setProps({
+        selectedOption: this.lastEvent().payload
+      });
+    }
+  }
+)(RadioBoxes);
 
 function Oven({ id, children }) {
   return (
@@ -144,7 +204,7 @@ function Oven({ id, children }) {
         flexDirection: 'column'
       }}
     >
-      <RadioBoxes id={id} />
+      <RadioBoxesContainer id={id} />
       <Thermometer
         theme="light"
         value="18"
