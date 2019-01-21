@@ -195,6 +195,93 @@ const RadioBoxesContainer = connectProps(
   }
 )(RadioBoxes);
 
+function* whenOvenIsOnStartInterval() {
+  while (true) {
+    yield {
+      wait: 'TURN_OVEN_ON'
+    };
+
+    // start an interval
+    const interval = setInterval(() => {
+      this.request('INTERVAL');
+    }, 1000);
+
+    yield {
+      wait: 'TURN_OVEN_OFF'
+    };
+    clearInterval(interval);
+  }
+}
+
+const ThermometerContainer = connectProps(
+  function* increaseTemp() {
+    while (true) {
+      yield {
+        wait: 'INTERVAL'
+      };
+      yield {
+        request: this.props.id + '_INCREASE_TEMP'
+      };
+    }
+  },
+  function* increaseOnlyWhenSettingTemp() {
+    while (true) {
+      yield {
+        block: this.props.id + '_INCREASE_TEMP',
+        wait: event =>
+          event.type ===
+            this.props.id + '_SET_TEMPERATURE' &&
+          event.payload !== 'off'
+      };
+      yield {
+        wait: event =>
+          event.type ===
+            this.props.id + '_SET_TEMPERATURE' &&
+          event.payload === 'off'
+      };
+    }
+  },
+  function* stopIncreaseWhenOff() {
+    while (true) {
+      yield {
+        wait: event =>
+          event.type ===
+            this.props.id + '_SET_TEMPERATURE' &&
+          event.payload === 'off'
+      };
+      yield {
+        block: this.props.id + '_INCREASE_TEMP',
+        wait: event =>
+          event.type ===
+            this.props.id + '_SET_TEMPERATURE' &&
+          event.payload !== 'off'
+      };
+    }
+  },
+  function* UI() {
+    while (true) {
+      yield {
+        wait: this.props.id + '_INCREASE_TEMP'
+      };
+      this.setProps(prevProps => ({
+        ...prevProps,
+        value: Number(prevProps.value) + 1
+      }));
+    }
+  },
+  function* UI2() {
+    while (true) {
+      yield {
+        wait: this.props.id + '_DECREASE_TEMP'
+      };
+      this.setProps(prevProps => ({
+        ...prevProps,
+        value: Number(prevProps.value) - 1
+      }));
+    }
+  }
+)(Thermometer);
+
 function Oven({ id, children }) {
   return (
     <div
@@ -205,14 +292,16 @@ function Oven({ id, children }) {
       }}
     >
       <RadioBoxesContainer id={id} />
-      <Thermometer
+
+      <ThermometerContainer
         theme="light"
-        value="18"
+        value="0"
         max="100"
         steps="3"
         format="°C"
         size="large"
         height="300"
+        id={id}
       />
       {children || (
         <Dot id={id} style={{ marginTop: '30px' }} />
@@ -365,6 +454,7 @@ function Bakery3({ children }) {
     </div>
   );
 }
+
 export default () => (
   <React.Fragment>
     <h2>Append-only development with React</h2>
@@ -508,6 +598,14 @@ export default () => (
         }
       ]}
     >
+      <Bakery3 />
+    </Provider>
+    <p>
+      Let's now try to simulate the environment by making
+      the ovens turn hotter and colder (slowly) based on the
+      off, medium and high controls.
+    </p>
+    <Provider threads={[whenOvenIsOnStartInterval]}>
       <Bakery3 />
     </Provider>
   </React.Fragment>
