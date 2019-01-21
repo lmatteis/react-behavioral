@@ -224,24 +224,71 @@ const ThermometerContainer = connectProps(
       };
     }
   },
-  function* increaseOnlyWhenSettingTemp() {
+  function* decrease() {
     while (true) {
       yield {
-        block: this.props.id + '_INCREASE_TEMP',
-        wait: event =>
-          event.type ===
-            this.props.id + '_SET_TEMPERATURE' &&
-          event.payload !== 'off'
+        wait: 'INTERVAL'
       };
       yield {
-        wait: event =>
-          event.type ===
-            this.props.id + '_SET_TEMPERATURE' &&
-          event.payload === 'off'
+        request: this.props.id + '_DECREASE_TEMP'
       };
     }
   },
-  function* stopIncreaseWhenOff() {
+  // function* increaseOnlyWhenSettingTemp() {
+  //   while (true) {
+  //     yield {
+  //       block: [
+  //         this.props.id + '_INCREASE_TEMP',
+  //         this.props.id + '_DECREASE_TEMP'
+  //       ],
+  //       wait: event =>
+  //         event.type ===
+  //           this.props.id + '_SET_TEMPERATURE' &&
+  //         event.payload !== 'off'
+  //     };
+  //     yield {
+  //       wait: event =>
+  //         event.type ===
+  //           this.props.id + '_SET_TEMPERATURE' &&
+  //         event.payload === 'off'
+  //     };
+  //   }
+  // },
+  // function* stopIncreaseWhenOff() {
+  //   while (true) {
+  //     yield {
+  //       wait: event =>
+  //         event.type ===
+  //           this.props.id + '_SET_TEMPERATURE' &&
+  //         event.payload === 'off'
+  //     };
+  //     yield {
+  //       block: this.props.id + '_INCREASE_TEMP',
+  //       wait: event =>
+  //         event.type ===
+  //           this.props.id + '_SET_TEMPERATURE' &&
+  //         event.payload !== 'off'
+  //     };
+  //   }
+  // },
+  function* whenHighBlockDecrease() {
+    while (true) {
+      yield {
+        wait: event =>
+          event.type ===
+            this.props.id + '_SET_TEMPERATURE' &&
+          event.payload === 'high'
+      };
+      yield {
+        block: this.props.id + '_DECREASE_TEMP',
+        wait: event =>
+          event.type ===
+            this.props.id + '_SET_TEMPERATURE' &&
+          event.payload !== 'high'
+      };
+    }
+  },
+  function* whenOffBlockIncrease() {
     while (true) {
       yield {
         wait: event =>
@@ -256,6 +303,26 @@ const ThermometerContainer = connectProps(
             this.props.id + '_SET_TEMPERATURE' &&
           event.payload !== 'off'
       };
+    }
+  },
+  function* whenOffAndZeroBlock() {
+    while (true) {
+      if (this.state.value === 0) {
+        yield {
+          block: [
+            this.props.id + '_INCREASE_TEMP',
+            this.props.id + '_DECREASE_TEMP'
+          ],
+          wait: this.props.id + '_SET_TEMPERATURE'
+        };
+      } else {
+        yield {
+          wait: [
+            this.props.id + '_INCREASE_TEMP',
+            this.props.id + '_DECREASE_TEMP'
+          ]
+        };
+      }
     }
   },
   function* UI() {
@@ -265,7 +332,7 @@ const ThermometerContainer = connectProps(
       };
       this.setProps(prevProps => ({
         ...prevProps,
-        value: Number(prevProps.value) + 1
+        value: Number(prevProps.value) + 5
       }));
     }
   },
@@ -276,7 +343,7 @@ const ThermometerContainer = connectProps(
       };
       this.setProps(prevProps => ({
         ...prevProps,
-        value: Number(prevProps.value) - 1
+        value: Number(prevProps.value) - 5
       }));
     }
   }
