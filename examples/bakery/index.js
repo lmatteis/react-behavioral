@@ -224,71 +224,13 @@ const ThermometerContainer = connectProps(
       };
     }
   },
-  function* decrease() {
-    while (true) {
-      yield {
-        wait: 'INTERVAL'
-      };
-      yield {
-        request: this.props.id + '_DECREASE_TEMP'
-      };
-    }
-  },
-  // function* increaseOnlyWhenSettingTemp() {
-  //   while (true) {
-  //     yield {
-  //       block: [
-  //         this.props.id + '_INCREASE_TEMP',
-  //         this.props.id + '_DECREASE_TEMP'
-  //       ],
-  //       wait: event =>
-  //         event.type ===
-  //           this.props.id + '_SET_TEMPERATURE' &&
-  //         event.payload !== 'off'
-  //     };
-  //     yield {
-  //       wait: event =>
-  //         event.type ===
-  //           this.props.id + '_SET_TEMPERATURE' &&
-  //         event.payload === 'off'
-  //     };
-  //   }
-  // },
-  // function* stopIncreaseWhenOff() {
-  //   while (true) {
-  //     yield {
-  //       wait: event =>
-  //         event.type ===
-  //           this.props.id + '_SET_TEMPERATURE' &&
-  //         event.payload === 'off'
-  //     };
-  //     yield {
-  //       block: this.props.id + '_INCREASE_TEMP',
-  //       wait: event =>
-  //         event.type ===
-  //           this.props.id + '_SET_TEMPERATURE' &&
-  //         event.payload !== 'off'
-  //     };
-  //   }
-  // },
-  function* whenHighBlockDecrease() {
-    while (true) {
-      yield {
-        wait: event =>
-          event.type ===
-            this.props.id + '_SET_TEMPERATURE' &&
-          event.payload === 'high'
-      };
-      yield {
-        block: this.props.id + '_DECREASE_TEMP',
-        wait: event =>
-          event.type ===
-            this.props.id + '_SET_TEMPERATURE' &&
-          event.payload !== 'high'
-      };
-    }
-  },
-  function* whenOffBlockIncrease() {
+  function*() {
+    yield {
+      block: this.props.id + '_INCREASE_TEMP',
+      wait: event =>
+        event.type === this.props.id + '_SET_TEMPERATURE' &&
+        event.payload === 'high'
+    };
     while (true) {
       yield {
         wait: event =>
@@ -303,26 +245,6 @@ const ThermometerContainer = connectProps(
             this.props.id + '_SET_TEMPERATURE' &&
           event.payload !== 'off'
       };
-    }
-  },
-  function* whenOffAndZeroBlock() {
-    while (true) {
-      if (this.state.value === 0) {
-        yield {
-          block: [
-            this.props.id + '_INCREASE_TEMP',
-            this.props.id + '_DECREASE_TEMP'
-          ],
-          wait: this.props.id + '_SET_TEMPERATURE'
-        };
-      } else {
-        yield {
-          wait: [
-            this.props.id + '_INCREASE_TEMP',
-            this.props.id + '_DECREASE_TEMP'
-          ]
-        };
-      }
     }
   },
   function* UI() {
