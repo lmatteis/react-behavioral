@@ -209,9 +209,14 @@ function* whenOvenIsOnStartInterval() {
     yield {
       wait: 'TURN_OVEN_OFF'
     };
+    yield {
+      request: 'CLEAR_INTERVAL'
+    };
     clearInterval(interval);
   }
 }
+
+function* clear() {}
 
 const ThermometerContainer = connectProps(
   function* increaseTemp() {
@@ -229,7 +234,8 @@ const ThermometerContainer = connectProps(
       block: this.props.id + '_INCREASE_TEMP',
       wait: event =>
         event.type === this.props.id + '_SET_TEMPERATURE' &&
-        event.payload === 'high'
+        (event.payload === 'high' ||
+          event.payload === 'medium')
     };
     while (true) {
       yield {
@@ -368,6 +374,38 @@ const ThermometerContainer = connectProps(
         ...prevProps,
         value: Number(prevProps.value) - 5
       }));
+    }
+  },
+  function* clear() {
+    // clear interval only after all ovens are back to 0
+    while (true) {
+      yield {
+        block: 'CLEAR_INTERVAL',
+        wait: this.props.id + '_OVEN_ZERO'
+      };
+    }
+  },
+  function*() {
+    while (true) {
+      yield {
+        wait: this.props.id + '_DECREASE_TEMP'
+      };
+      if (this.state.value <= 0) {
+        yield {
+          request: this.props.id + '_OVEN_ZERO'
+        };
+      }
+      // a switch has been turned on, don't clear interval until it's set to off,
+      // and value is set to 0
+    }
+  },
+  function*() {
+    while (true) {
+      yield { wait: 'TURN_OVEN_OFF' };
+      yield {
+        block: this.props.id + '_INCREASE_TEMP',
+        wait: this.props.id + '_OVEN_ZERO'
+      };
     }
   }
 )(Thermometer);
