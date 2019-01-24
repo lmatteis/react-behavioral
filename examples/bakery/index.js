@@ -306,6 +306,48 @@ const ThermometerContainer = connectProps(
       }
     }
   },
+  function* whenMediumTryToReachHalf() {
+    const medium = event =>
+      event.type === this.props.id + '_SET_TEMPERATURE' &&
+      event.payload === 'medium';
+
+    const setTemperature =
+      this.props.id + '_SET_TEMPERATURE';
+
+    while (true) {
+      yield { wait: medium };
+      while (true) {
+        if (this.state.value > 50) {
+          yield {
+            block: [this.props.id + '_INCREASE_TEMP'],
+            wait: [setTemperature, 'INTERVAL']
+          };
+        } else if (
+          this.state.value < 50 ||
+          this.state.value === 0
+        ) {
+          yield {
+            block: [this.props.id + '_DECREASE_TEMP'],
+            wait: [setTemperature, 'INTERVAL']
+          };
+        } else {
+          yield {
+            block: [
+              this.props.id + '_INCREASE_TEMP',
+              this.props.id + '_DECREASE_TEMP'
+            ],
+            wait: [setTemperature, 'INTERVAL']
+          };
+        }
+        if (
+          this.lastEvent().type === setTemperature &&
+          this.lastEvent().payload !== 'medium'
+        ) {
+          break;
+        }
+      }
+    }
+  },
   function* UI() {
     while (true) {
       yield {
