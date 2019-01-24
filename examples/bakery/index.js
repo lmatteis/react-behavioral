@@ -204,7 +204,7 @@ function* whenOvenIsOnStartInterval() {
     // start an interval
     const interval = setInterval(() => {
       this.request('INTERVAL');
-    }, 1000);
+    }, 500);
 
     yield {
       wait: 'TURN_OVEN_OFF'
@@ -258,7 +258,8 @@ const ThermometerContainer = connectProps(
       block: this.props.id + '_DECREASE_TEMP',
       wait: event =>
         event.type === this.props.id + '_SET_TEMPERATURE' &&
-        event.payload === 'off'
+        (event.payload === 'off' ||
+          event.payload === 'medium')
     };
     while (true) {
       yield {
@@ -276,19 +277,19 @@ const ThermometerContainer = connectProps(
       };
     }
   },
-  function* stopWhen100() {
-    while (true) {
-      yield {
-        wait: this.props.id + '_INCREASE_TEMP'
-      };
-      if (this.state.value === 100) {
-        yield {
-          block: this.props.id + '_INCREASE_TEMP',
-          wait: this.props.id + '_DECREASE_TEMP'
-        };
-      }
-    }
-  },
+  // function* stopWhen100() {
+  //   while (true) {
+  //     yield {
+  //       wait: this.props.id + '_INCREASE_TEMP'
+  //     };
+  //     if (this.state.value === 100) {
+  //       yield {
+  //         block: this.props.id + '_INCREASE_TEMP',
+  //         wait: this.props.id + '_DECREASE_TEMP'
+  //       };
+  //     }
+  //   }
+  // },
   function* whenOffDecrease() {
     while (true) {
       yield {
@@ -299,16 +300,32 @@ const ThermometerContainer = connectProps(
       };
     }
   },
-  function* stopWhen0() {
+  function* stop() {
+    let count = 0;
+    const { id } = this.props;
     while (true) {
       yield {
-        wait: this.props.id + '_DECREASE_TEMP'
+        wait: [id + '_DECREASE_TEMP', id + '_INCREASE_TEMP']
       };
-      if (this.state.value === 0) {
+      const { type } = this.lastEvent();
+
+      if (type === id + '_INCREASE_TEMP') {
+        count = count + 5;
+      } else if (type === id + '_DECREASE_TEMP') {
+        count = count - 5;
+      }
+      if (count === 0) {
         yield {
           block: this.props.id + '_DECREASE_TEMP',
           wait: this.props.id + '_INCREASE_TEMP'
         };
+        count = count + 5;
+      } else if (count === 100) {
+        yield {
+          block: this.props.id + '_INCREASE_TEMP',
+          wait: this.props.id + '_DECREASE_TEMP'
+        };
+        count = count - 5;
       }
     }
   },
@@ -375,39 +392,39 @@ const ThermometerContainer = connectProps(
         value: Number(prevProps.value) - 5
       }));
     }
-  },
-  function* clear() {
-    // clear interval only after all ovens are back to 0
-    while (true) {
-      yield {
-        block: 'CLEAR_INTERVAL',
-        wait: this.props.id + '_OVEN_ZERO'
-      };
-    }
-  },
-  function*() {
-    while (true) {
-      yield {
-        wait: this.props.id + '_DECREASE_TEMP'
-      };
-      if (this.state.value <= 0) {
-        yield {
-          request: this.props.id + '_OVEN_ZERO'
-        };
-      }
-      // a switch has been turned on, don't clear interval until it's set to off,
-      // and value is set to 0
-    }
-  },
-  function*() {
-    while (true) {
-      yield { wait: 'TURN_OVEN_OFF' };
-      yield {
-        block: this.props.id + '_INCREASE_TEMP',
-        wait: this.props.id + '_OVEN_ZERO'
-      };
-    }
   }
+  // function* clear() {
+  //   // clear interval only after all ovens are back to 0
+  //   while (true) {
+  //     yield {
+  //       block: 'CLEAR_INTERVAL',
+  //       wait: this.props.id + '_OVEN_ZERO'
+  //     };
+  //   }
+  // },
+  // function*() {
+  //   while (true) {
+  //     yield {
+  //       wait: this.props.id + '_DECREASE_TEMP'
+  //     };
+  //     if (this.state.value <= 0) {
+  //       yield {
+  //         request: this.props.id + '_OVEN_ZERO'
+  //       };
+  //     }
+  //     // a switch has been turned on, don't clear interval until it's set to off,
+  //     // and value is set to 0
+  //   }
+  // },
+  // function*() {
+  //   while (true) {
+  //     yield { wait: 'TURN_OVEN_OFF' };
+  //     yield {
+  //       block: this.props.id + '_INCREASE_TEMP',
+  //       wait: this.props.id + '_OVEN_ZERO'
+  //     };
+  //   }
+  // }
 )(Thermometer);
 
 function Oven({ id, children }) {
@@ -583,6 +600,50 @@ function Bakery3({ children }) {
   );
 }
 
+const lights = [
+  function*() {
+    const { id } = this.props;
+    while (true) {
+      yield {
+        wait: ['TURN_OVEN_OFF']
+      };
+      yield { request: 'OFF_LIGHT' };
+      yield {
+        block: ['GREEN_LIGHT', 'RED_LIGHT'],
+        wait: 'TURN_OVEN_ON'
+      };
+    }
+  },
+  function*() {
+    const { id } = this.props;
+    while (true) {
+      yield {
+        wait: ['TURN_OVEN_ON']
+      };
+      yield { request: 'GREEN_LIGHT' };
+
+      let timeout = 0;
+      for (var i = 0; i < 3; i++) {
+        timeout += 200;
+        setTimeout(() => {
+          this.bSync({
+            request: 'RED_LIGHT',
+            wait: 'TURN_OVEN_ON'
+          });
+        }, timeout);
+
+        timeout += 200;
+        setTimeout(() => {
+          this.bSync({
+            request: 'GREEN_LIGHT',
+            wait: 'TURN_OVEN_ON'
+          });
+        }, timeout);
+      }
+    }
+  }
+];
+
 export default () => (
   <React.Fragment>
     <h2>Append-only development with React</h2>
@@ -656,76 +717,7 @@ export default () => (
       flicker (by changing colors from green to red and
       back) three times, terminating in green.
     </p>
-    <Provider
-      threads={[
-        function*() {
-          while (true) {
-            yield {
-              wait: 'TURN_OVEN_OFF'
-            };
-            yield {
-              request: {
-                type: '1_SET_TEMPERATURE',
-                payload: 'off'
-              }
-            };
-            yield {
-              request: {
-                type: '2_SET_TEMPERATURE',
-                payload: 'off'
-              }
-            };
-            yield {
-              request: {
-                type: '3_SET_TEMPERATURE',
-                payload: 'off'
-              }
-            };
-          }
-        },
-        function*() {
-          const { id } = this.props;
-          while (true) {
-            yield {
-              wait: ['TURN_OVEN_OFF']
-            };
-            yield { request: 'OFF_LIGHT' };
-            yield {
-              block: ['GREEN_LIGHT', 'RED_LIGHT'],
-              wait: 'TURN_OVEN_ON'
-            };
-          }
-        },
-        function*() {
-          const { id } = this.props;
-          while (true) {
-            yield {
-              wait: ['TURN_OVEN_ON']
-            };
-            yield { request: 'GREEN_LIGHT' };
-
-            let timeout = 0;
-            for (var i = 0; i < 3; i++) {
-              timeout += 200;
-              setTimeout(() => {
-                this.bSync({
-                  request: 'RED_LIGHT',
-                  wait: 'TURN_OVEN_ON'
-                });
-              }, timeout);
-
-              timeout += 200;
-              setTimeout(() => {
-                this.bSync({
-                  request: 'GREEN_LIGHT',
-                  wait: 'TURN_OVEN_ON'
-                });
-              }, timeout);
-            }
-          }
-        }
-      ]}
-    >
+    <Provider threads={lights}>
       <Bakery3 />
     </Provider>
     <p>
@@ -733,7 +725,9 @@ export default () => (
       the ovens turn hotter and colder (slowly) based on the
       off, medium and high controls.
     </p>
-    <Provider threads={[whenOvenIsOnStartInterval]}>
+    <Provider
+      threads={[whenOvenIsOnStartInterval, ...lights]}
+    >
       <Bakery3 />
     </Provider>
   </React.Fragment>
