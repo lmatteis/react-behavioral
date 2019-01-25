@@ -314,7 +314,7 @@ const ThermometerContainer = connectProps(
       } else if (type === id + '_DECREASE_TEMP') {
         count = count - 5;
       }
-      if (count === 0) {
+      if (count <= 0) {
         yield {
           block: this.props.id + '_DECREASE_TEMP',
           wait: this.props.id + '_INCREASE_TEMP'
@@ -371,6 +371,43 @@ const ThermometerContainer = connectProps(
       }
     }
   },
+  [
+    0.5,
+    function* whenOffBlockSetTemperature() {
+      yield {
+        block: event =>
+          event.type ===
+            this.props.id + '_SET_TEMPERATURE' &&
+          event.payload !== 'off',
+        wait: 'TURN_OVEN_ON'
+      };
+      yield {
+        request: {
+          type: this.props.id + '_SET_TEMPERATURE',
+          payload: 'off'
+        }
+      };
+
+      while (true) {
+        yield {
+          wait: 'TURN_OVEN_OFF'
+        };
+        yield {
+          block: event =>
+            event.type ===
+              this.props.id + '_SET_TEMPERATURE' &&
+            event.payload !== 'off',
+          wait: 'TURN_OVEN_ON'
+        };
+        yield {
+          request: {
+            type: this.props.id + '_SET_TEMPERATURE',
+            payload: 'off'
+          }
+        };
+      }
+    }
+  ],
   function* UI() {
     while (true) {
       yield {
@@ -392,30 +429,44 @@ const ThermometerContainer = connectProps(
         value: Number(prevProps.value) - 5
       }));
     }
+  },
+  function* whenOvenOffSetTemperatureOff() {
+    while (true) {
+      yield { wait: 'TURN_OVEN_OFF' };
+      yield {
+        request: {
+          type: this.props.id + '_SET_TEMPERATURE',
+          payload: 'off'
+        }
+      };
+    }
+  },
+  function* clear() {
+    // clear interval only after all ovens are back to 0
+    while (true) {
+      yield {
+        wait: 'TURN_OVEN_OFF'
+      };
+      if (this.state.value > 0) {
+        yield {
+          block: 'CLEAR_INTERVAL',
+          wait: this.props.id + '_OVEN_ZERO'
+        };
+      }
+    }
+  },
+  function*() {
+    while (true) {
+      yield {
+        wait: this.props.id + '_DECREASE_TEMP'
+      };
+      if (this.state.value <= 0) {
+        yield {
+          request: this.props.id + '_OVEN_ZERO'
+        };
+      }
+    }
   }
-  // function* clear() {
-  //   // clear interval only after all ovens are back to 0
-  //   while (true) {
-  //     yield {
-  //       block: 'CLEAR_INTERVAL',
-  //       wait: this.props.id + '_OVEN_ZERO'
-  //     };
-  //   }
-  // },
-  // function*() {
-  //   while (true) {
-  //     yield {
-  //       wait: this.props.id + '_DECREASE_TEMP'
-  //     };
-  //     if (this.state.value <= 0) {
-  //       yield {
-  //         request: this.props.id + '_OVEN_ZERO'
-  //       };
-  //     }
-  //     // a switch has been turned on, don't clear interval until it's set to off,
-  //     // and value is set to 0
-  //   }
-  // },
   // function*() {
   //   while (true) {
   //     yield { wait: 'TURN_OVEN_OFF' };

@@ -91,9 +91,13 @@ class ComponentPropsWithThread extends React.Component {
     // Context value is this.props.bp
     const { bp, threads, priority } = this.props;
     let pr = 1;
-    threads.forEach(thread =>
-      bp.addBThread(``, pr++, thread.bind(this))
-    );
+    threads.forEach(thread => {
+      if (Array.isArray(thread)) {
+        bp.addBThread(``, thread[0], thread[1].bind(this));
+      } else {
+        bp.addBThread(``, pr++, thread.bind(this));
+      }
+    });
     bp.run();
     this.bp = bp;
   }
