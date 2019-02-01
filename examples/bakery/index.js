@@ -7,7 +7,7 @@ import {
   connectProps
 } from '../../src/react-behavioral';
 
-import Thermometer from 'react-thermometer-component';
+import Thermometer from './Thermometer';
 const Log = connect(function*() {
   const style = {
     float: 'right',
@@ -695,6 +695,27 @@ const lights = [
   }
 ];
 
+const neverDecreaseTempUnlessItWasIncreasedFirst = [
+  function*() {
+    yield {
+      block: '1_DECREASE_TEMP',
+      wait: '1_INCREASE_TEMP'
+    };
+  },
+  function*() {
+    yield {
+      block: '2_DECREASE_TEMP',
+      wait: '2_INCREASE_TEMP'
+    };
+  },
+  function*() {
+    yield {
+      block: '3_DECREASE_TEMP',
+      wait: '3_INCREASE_TEMP'
+    };
+  }
+];
+
 export default () => (
   <React.Fragment>
     <h2>Append-only development with React</h2>
@@ -778,6 +799,61 @@ export default () => (
     </p>
     <Provider
       threads={[whenOvenIsOnStartInterval, ...lights]}
+    >
+      <Bakery3 />
+    </Provider>
+    <p>
+      The above program has a problem. When we turn the oven
+      ON for some reason the temperature is set to -5
+      degrees on all ovens.
+    </p>
+    <p>
+      We will showcase the incremental patching capabilities
+      of Behavioral Programming. Let us analyze the trace of
+      events that cause the -5 to appear. We immedietaly
+      realize that the `_DECREASE_TEMP` event is triggered.
+      And it shouldn't. In a normal program we'd have to
+      understand which condition caused this event to be
+      triggered and why, but in BP we can specify which
+      behaviors (traces of events) are mandatory and
+      forbidden.
+    </p>
+    <p>
+      For now we let's incrementally patch the system: we
+      never want the `_DECREASE_TEMP` to be triggered unless
+      an `_INCREASE_TEMP` was triggered. This requirement
+      can <b>directly</b> be translated into a b-thread:
+    </p>
+    <pre>
+      {`
+const neverDecreaseTempUnlessItWasIncreasedFirst = [
+  function*() {
+    yield {
+      block: '1_DECREASE_TEMP',
+      wait: '1_INCREASE_TEMP'
+    };
+  },
+  function*() {
+    yield {
+      block: '2_DECREASE_TEMP',
+      wait: '2_INCREASE_TEMP'
+    };
+  },
+  function*() {
+    yield {
+      block: '3_DECREASE_TEMP',
+      wait: '3_INCREASE_TEMP'
+    };
+  }
+];
+      `}
+    </pre>
+    <Provider
+      threads={[
+        whenOvenIsOnStartInterval,
+        ...lights,
+        ...neverDecreaseTempUnlessItWasIncreasedFirst
+      ]}
     >
       <Bakery3 />
     </Provider>

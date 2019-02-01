@@ -1,0 +1,437 @@
+.thermometer .thermometer__mercury {
+  transition: all 0.5s ease-in-out;
+}
+
+.thermometer .thermometer__percent-current:before,
+.thermometer .thermometer__percent-current:after,
+.thermometer .thermometer__draw-b:after,
+.thermometer__draw-bReverse:after,
+.thermometer .thermometer__draw-b:before,
+.thermometer__draw-bReverse:before {
+  content: '';
+  margin: auto;
+}
+
+.thermometer ul.thermometer__statistics {
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.thermometer .thermometer__percent-current {
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.thermometer ul.thermometer__statistics {
+  margin: 0;
+  padding: 0;
+}
+
+.thermometer--small ul.thermometer__statistics li {
+  width: 52px;
+  padding-left: 8px;
+}
+
+.thermometer--small .thermometer__draw-a {
+  width: 14px;
+}
+.thermometer--small .thermometer__draw-a:after {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: -12px;
+  left: -10px;
+  width: 34px;
+  height: 34px;
+}
+
+.thermometer--small .thermometer__draw-b:before {
+  width: 4px;
+}
+
+.thermometer--small .thermometer__draw-b:after {
+  position: absolute;
+  top: 13px;
+  right: 0;
+  bottom: initial;
+  left: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.thermometer--small .thermometer__draw-bReverse:before {
+  width: 4px;
+}
+
+.thermometer--small .thermometer__draw-bReverse:after {
+  position: absolute;
+  top: 13px;
+  right: 0;
+  bottom: initial;
+  left: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.thermometer--small .thermometer__meter {
+  width: 4px;
+}
+
+.thermometer--normal ul.thermometer__statistics li {
+  width: 42px;
+  padding-left: 13px;
+}
+
+.thermometer--normal .thermometer__draw-a {
+  width: 30px;
+}
+.thermometer--normal .thermometer__draw-a:after {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: -20px;
+  left: -10px;
+  width: 50px;
+  height: 50px;
+}
+
+.thermometer--normal .thermometer__draw-b:before {
+  width: 10px;
+}
+
+.thermometer--normal .thermometer__draw-b:after {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  bottom: initial;
+  left: 0;
+  width: 34px;
+  height: 34px;
+}
+
+.thermometer--normal .thermometer__draw-bReverse:before {
+  width: 10px;
+}
+
+.thermometer--normal .thermometer__draw-bReverse:after {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  bottom: initial;
+  left: 0;
+  width: 34px;
+  height: 34px;
+}
+
+.thermometer--normal .thermometer__meter {
+  width: 10px;
+}
+
+.thermometer--large ul.thermometer__statistics li {
+  width: 52px;
+  padding-left: 34px;
+}
+
+.thermometer--large .thermometer__draw-a {
+  width: 50px;
+}
+.thermometer--large .thermometer__draw-a:after {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: -30px;
+  left: -10px;
+  width: 70px;
+  height: 70px;
+}
+
+.thermometer--large .thermometer__draw-b:before {
+  width: 30px;
+}
+
+.thermometer--large .thermometer__draw-b:after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: initial;
+  left: 0;
+  width: 50px;
+  height: 50px;
+}
+
+.thermometer--large .thermometer__draw-bReverse:before {
+  width: 30px;
+}
+
+.thermometer--large .thermometer__draw-bReverse:after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: initial;
+  left: 0;
+  width: 50px;
+  height: 50px;
+}
+
+.thermometer--large .thermometer__meter {
+  width: 30px;
+}
+
+.thermometer--theme-light .thermometer__draw-a,
+.thermometer--theme-light .thermometer__draw-a:before,
+.thermometer--theme-light .thermometer__draw-a:after {
+  background-color: #fff;
+}
+
+.thermometer--theme-light .thermometer__meter {
+  background-color: #d6d6d6;
+}
+
+.thermometer--theme-light ul.thermometer__statistics li {
+  color: #000;
+}
+.thermometer--theme-light
+  ul.thermometer__statistics
+  li:before {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.2),
+    transparent
+  );
+}
+
+.thermometer--theme-light .thermometer__percent-current {
+  color: #000;
+  background-color: #fff;
+}
+.thermometer--theme-light
+  .thermometer__percent-current:after {
+  border-left: 8px solid #fff;
+}
+
+.thermometer--theme-dark .thermometer__draw-a,
+.thermometer--theme-dark .thermometer__draw-a:before,
+.thermometer--theme-dark .thermometer__draw-a:after {
+  background-color: #333;
+}
+
+.thermometer--theme-dark .thermometer__meter {
+  background-color: #1d1d1d;
+}
+
+.thermometer--theme-dark ul.thermometer__statistics li {
+  color: #fff;
+}
+.thermometer--theme-dark
+  ul.thermometer__statistics
+  li:before {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+}
+
+.thermometer--theme-dark .thermometer__percent-current {
+  color: #fff;
+  background-color: #1d1d1d;
+}
+.thermometer--theme-dark
+  .thermometer__percent-current:after {
+  border-left: 8px solid #1d1d1d;
+}
+
+.thermometer {
+  width: 100px;
+  position: relative;
+}
+.thermometer ul.thermometer__statistics {
+  position: absolute;
+  top: 0;
+  right: initial;
+  bottom: initial;
+  left: 0;
+  height: 100%;
+  z-index: 1;
+}
+.thermometer ul.thermometer__statistics li {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: initial;
+  left: 0;
+  list-style: none;
+}
+.thermometer ul.thermometer__statistics li:before {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: -1px;
+  left: 0;
+  content: '';
+  width: 100%;
+  height: 1px;
+}
+.thermometer .thermometer__meter {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  bottom: initial;
+  left: 0;
+  height: calc(100% - 58px);
+  margin: auto;
+  border-radius: 50px 50px 0 0;
+  z-index: 1;
+}
+.thermometer .thermometer__mercury {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  border-radius: 50px 50px 0 0;
+}
+.thermometer .thermometer__mask {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: -1px;
+  left: initial;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  border-radius: 50px 50px 0 0;
+}
+.thermometer .thermometer__bg-color {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: 0;
+  left: initial;
+  width: 100%;
+  background: linear-gradient(#2196f3, #8bc34a, #f44336);
+  background: linear-gradient(#f44336, #8bc34a);
+}
+.thermometer .thermometer__bg-colorReverse {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: 0;
+  left: initial;
+  width: 100%;
+  background: linear-gradient(#f44336, #8bc34a, #2196f3);
+}
+.thermometer .thermometer__percent-current {
+  position: absolute;
+  top: 4px;
+  right: initial;
+  bottom: initial;
+  left: 0;
+  transform: translateX(calc(-100% - 8px)) translateY(-50%);
+  padding: 5px 10px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1),
+    3px 3px 6px rgba(0, 0, 0, 0.1);
+}
+.thermometer .thermometer__percent-current:before,
+.thermometer .thermometer__percent-current:after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: initial;
+  width: 0;
+  height: 0;
+}
+.thermometer .thermometer__percent-current:after {
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  transform: translateX(calc(100% - 2px)) translateY(0);
+}
+.thermometer .thermometer__percent-current:before {
+  border-left: 8px solid rgba(0, 0, 0, 0.1);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  transform: translateX(calc(100% - 0px)) translateY(0);
+}
+.thermometer .thermometer__draw-a {
+  position: relative;
+  height: calc(100% - 20px);
+  margin: auto;
+  border-radius: 50px 50px 0 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05),
+    1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+.thermometer .thermometer__draw-a:after,
+.thermometer .thermometer__draw-a:before {
+  content: '';
+}
+.thermometer .thermometer__draw-a:before {
+  position: absolute;
+  top: initial;
+  right: initial;
+  bottom: 0;
+  left: 0;
+  height: 50px;
+  width: 100%;
+  z-index: 1;
+}
+.thermometer .thermometer__draw-a:after {
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05),
+    1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+.thermometer .thermometer__draw-b {
+  position: absolute;
+  top: initial;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  z-index: 1;
+}
+.thermometer .thermometer__draw-b:after {
+  background-color: #8bc34a;
+  border-radius: 50%;
+}
+.thermometer .thermometer__draw-b:before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 40px;
+  left: 0;
+  height: 20px;
+  background-color: #8bc34a;
+  border-radius: 50px 50px 0 0;
+}
+.thermometer .thermometer__draw-bReverse {
+  position: absolute;
+  top: initial;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  z-index: 1;
+}
+.thermometer .thermometer__draw-bReverse:after {
+  background-color: #2196f3;
+  border-radius: 50%;
+}
+.thermometer .thermometer__draw-bReverse:before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 40px;
+  left: 0;
+  height: 20px;
+  background-color: #2196f3;
+  border-radius: 50px 50px 0 0;
+}
