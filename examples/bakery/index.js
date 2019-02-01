@@ -716,6 +716,26 @@ const neverDecreaseTempUnlessItWasIncreasedFirst = [
   }
 ];
 
+const blockQuickSuccessionIncreaseDecrease = [
+  function*() {
+    while (true) {
+      yield {
+        wait: '1_INCREASE_TEMP'
+      };
+
+      setTimeout(() => {
+        this.request('500_MS_ELAPSED');
+      }, 500);
+
+      // block another other increase until 500ms have elapsed
+      yield {
+        block: '1_INCREASE_TEMP',
+        wait: '500_MS_ELAPSED'
+      };
+    }
+  }
+];
+
 export default () => (
   <React.Fragment>
     <h2>Append-only development with React</h2>
@@ -853,6 +873,63 @@ const neverDecreaseTempUnlessItWasIncreasedFirst = [
         whenOvenIsOnStartInterval,
         ...lights,
         ...neverDecreaseTempUnlessItWasIncreasedFirst
+      ]}
+    >
+      <Bakery3 />
+    </Provider>
+    <p>
+      As we continue to use the app we notice another weird
+      behavior: if we click on high or medium before the
+      oven starts, then turn the oven on, and finally try
+      switching one of the ovens to high, we see that two
+      _INCREASE_TEMP are triggered in quick succession
+      causing the temperature to immedietaly jump to 10
+      degrees, instead of passing to 5.
+    </p>
+    <p>
+      Again, in a normal programming setting to fix this
+      we'd have to dig and figure out this timing issue
+      which may or may not be trivial. Instead since we are
+      programming behaviorally using b-threads we can try
+      and fix this incrementally, but adding new b-threads.
+    </p>
+    <p>
+      To patch this specific timing issue we can add a
+      b-thread that checks whether two _INCREASE_TEMP events
+      are triggered in quick succession. They should only
+      ever be triggered 500ms from one another. If one is
+      triggered in less than 500ms from the other, it is
+      blocked.
+    </p>
+    <pre>
+      {`
+const blockQuickSuccessionIncreaseDecrease = [
+  function*() {
+    while (true) {
+      yield {
+        wait: '1_INCREASE_TEMP'
+      };
+
+      setTimeout(() => {
+        this.request('500_MS_ELAPSED');
+      }, 500);
+
+      // block another other increase until 500ms have elapsed
+      yield {
+        block: '1_INCREASE_TEMP',
+        wait: '500_MS_ELAPSED'
+      };
+    }
+  }
+]
+        `}
+    </pre>
+    <Provider
+      threads={[
+        whenOvenIsOnStartInterval,
+        ...lights,
+        ...neverDecreaseTempUnlessItWasIncreasedFirst,
+        ...blockQuickSuccessionIncreaseDecrease
       ]}
     >
       <Bakery3 />
