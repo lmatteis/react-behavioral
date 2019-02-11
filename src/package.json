@@ -1,6 +1,6 @@
 {
   "name": "react-behavioral",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "#BehavioralProgramming for React",
   "main": "lib",
   "files": [
@@ -19,6 +19,6 @@
   },
   "keywords": [],
   "dependencies": {
-    "behavioral": "^1.0.2"
+    "behavioral": "^1.0.3"
   }
 }
