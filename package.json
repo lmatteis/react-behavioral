@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "react": "16.4.1",
-    "react-behavioral": "^1.0.8",
+    "react-behavioral": "^1.0.9",
     "react-dom": "16.4.1",
     "regenerator-runtime": "0.12.0"
   },
