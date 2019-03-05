@@ -28,14 +28,10 @@ const Log = connect(function*() {
       log.push(
         `{ type: "${this.lastEvent().type}", payload: ${
           this.lastEvent().payload
-        }, priority: ${this.lastEvent().priority} }`
-      );
-    } else {
-      log.push(
-        `{ type: "${this.lastEvent().type}", priority: ${
-          this.lastEvent().priority
         } }`
       );
+    } else {
+      log.push(`{ type: "${this.lastEvent().type}" }`);
     }
 
     this.updateView(
@@ -99,7 +95,7 @@ const RadioBoxesContainer = connectProps(
       selectedOption: 'off',
       onChange: value =>
         this.request({
-          type: 'SET_TEMPERATURE',
+          type: 'SET_LEVEL',
           payload: value
         })
     });
@@ -107,7 +103,7 @@ const RadioBoxesContainer = connectProps(
   function*() {
     while (true) {
       yield {
-        wait: 'SET_TEMPERATURE'
+        wait: 'SET_LEVEL'
       };
       this.setProps({
         selectedOption: this.lastEvent().payload
@@ -117,34 +113,23 @@ const RadioBoxesContainer = connectProps(
 )(RadioBoxes);
 
 const ThermometerContainer = connectProps(
-  function*() {
+  function* whenLevelIsSetIncreaseDecrease() {
     while (true) {
       yield {
-        wait: 'INCREASE_TEMP'
+        wait: 'SET_LEVEL'
       };
-      this.setProps(prevProps => ({
-        ...prevProps,
-        value: Number(prevProps.value) + 5
-      }));
-    }
-  },
-  function*() {
-    yield {
-      wait: 'SET_TEMPERATURE'
-    };
-    for (var i = 0; i < 20; i++) {
-      yield { request: 'INCREASE_TEMP' };
-    }
-  },
-  function*() {
-    while (true) {
-      yield { wait: 'INCREASE_TEMP' };
-      setTimeout(() => {
-        this.request('500_MS_ELAPSED');
-      }, 500);
       yield {
-        block: 'INCREASE_TEMP',
-        wait: '500_MS_ELAPSED'
+        request: 'INCREASE'
+      };
+    }
+  },
+  function* whenLevelIsSetIncreaseDecrease() {
+    while (true) {
+      yield {
+        wait: 'SET_LEVEL'
+      };
+      yield {
+        request: 'DECREASE'
       };
     }
   }

@@ -740,6 +740,20 @@ const blockQuickSuccessionIncreaseDecrease = [
   }
 ];
 
+const triggerIntervalOnlyWhenAnOvenIsOn = [
+  function*() {
+    while (true) {
+      yield {
+        wait: e =>
+          e.payload === 'off' &&
+          (e.type === '1_SET_TEMPERATURE' ||
+            e.type === '2_SET_TEMPERATURE' ||
+            e.type === '3_SET_TEMPERATURE')
+      };
+    }
+  }
+];
+
 export default () => (
   <React.Fragment>
     <h2>Append-only development with React</h2>
@@ -928,12 +942,32 @@ const blockQuickSuccessionIncreaseDecrease = [
 ]
         `}
     </pre>
+    <pre />
     <Provider
       threads={[
         whenOvenIsOnStartInterval,
         ...lights,
         ...neverDecreaseTempUnlessItWasIncreasedFirst,
         ...blockQuickSuccessionIncreaseDecrease
+      ]}
+    >
+      <Bakery3 />
+    </Provider>
+    <p>
+      As the app grows in complexity we notice other
+      peculiar behaviors such the fact that the INTERVAL
+      event is triggered as soon as the oven turns on.
+      Instead we realize we only want it triggered if any of
+      the ovens are ON. Again, the code just reads like
+      what's in our mind.
+    </p>
+    <Provider
+      threads={[
+        whenOvenIsOnStartInterval,
+        ...lights,
+        ...neverDecreaseTempUnlessItWasIncreasedFirst,
+        ...blockQuickSuccessionIncreaseDecrease,
+        ...triggerIntervalOnlyWhenAnOvenIsOn
       ]}
     >
       <Bakery3 />
