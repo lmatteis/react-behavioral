@@ -4,6 +4,8 @@ import IndexPage from './IndexPage';
 import MoviePage from './MoviePage';
 import './App.css';
 
+import { connect } from '../../../src/react-behavioral';
+
 function AppSpinner() {
   return (
     <div className="AppSpinner">
@@ -12,25 +14,21 @@ function AppSpinner() {
   );
 }
 
-export default class App extends React.Component {
-  state = {
-    currentMovieId: null,
-    showDetail: false
-  };
-  // state = {
-  //   currentMovieId: 771401855,
-  //   showDetail: true
-  // };
-
+class App extends React.Component {
   render() {
-    const { showDetail, currentMovieId } = this.state;
+    const {
+      showDetail,
+      currentMovieId,
+      onBackClick,
+      onMovieClick
+    } = this.props;
     return (
       <div className="App">
         <div>
           {showDetail && (
             <div
               className="back-link"
-              onClick={this.handleBackClick}
+              onClick={onBackClick}
             >
               ➜
             </div>
@@ -38,7 +36,7 @@ export default class App extends React.Component {
           {!showDetail ? (
             <IndexPage
               loadingMovieId={currentMovieId}
-              onMovieClick={this.handleMovieClick}
+              onMovieClick={onMovieClick}
             />
           ) : (
             <MoviePage movieId={currentMovieId} />
@@ -47,18 +45,34 @@ export default class App extends React.Component {
       </div>
     );
   }
-
-  handleMovieClick = movieId => {
-    this.setState({
-      currentMovieId: movieId,
-      showDetail: true
-    });
-  };
-
-  handleBackClick = () => {
-    this.setState({
-      currentMovieId: null,
-      showDetail: false
-    });
-  };
 }
+
+export default connect(function*() {
+  const onMovieClick = movieId => {
+    this.request({
+      type: 'CLICKED_MOVIE',
+      payload: movieId
+    });
+  };
+  const onBackClick = () => this.request('CLICKED_BACK');
+  while (true) {
+    this.updateView(
+      <App
+        onMovieClick={onMovieClick}
+        onBackClick={onBackClick}
+      />
+    );
+
+    yield { wait: 'CLICKED_MOVIE' };
+    const { payload: movieId } = this.lastEvent();
+    this.updateView(
+      <App
+        onMovieClick={onMovieClick}
+        currentMovieId={movieId}
+        onBackClick={onBackClick}
+        showDetail={true}
+      />
+    );
+    yield { wait: 'CLICKED_BACK' };
+  }
+});

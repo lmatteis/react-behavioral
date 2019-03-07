@@ -104,8 +104,38 @@ function MoviePage({ movieId, ...rest }) {
   );
 }
 
+const cache = {};
 export default connectProps(
+  function* cacheFetchMovieDetails() {
+    if (cache[this.props.movieId]) {
+      yield {
+        block: event =>
+          event.type === 'fetchMovieDetails' &&
+          event.payload === this.props.movieId
+      };
+    } else {
+      yield { wait: 'fetchMovieDetailsSuccess' };
+      const details = this.lastEvent().payload;
+      cache[details.id] = details;
+    }
+  },
   function*() {
+    if (cache[this.props.movieId]) {
+      yield {
+        request: {
+          type: 'fetchMovieDetailsSuccess',
+          payload: cache[this.props.movieId]
+        }
+      };
+    }
+  },
+  function*() {
+    yield {
+      request: {
+        type: 'fetchMovieDetails',
+        payload: this.props.movieId
+      }
+    };
     fetchMovieDetails(this.props.movieId).then(details =>
       this.request({
         type: 'fetchMovieDetailsSuccess',
