@@ -1,0 +1,13 @@
+html,
+body {
+  padding: 20px 0;
+  font-size: 12px;
+}
+
+.btn {
+  cursor: pointer;
+}
+
+.btn-toolbar .btn:nth-child(n + 2) {
+  margin-left: 8px;
+}

@@ -1,0 +1,55 @@
+body,
+html {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  font-weight: 900;
+}
+video {
+  position: relative;
+  width: 100%;
+}
+h1 {
+  padding: 20px;
+}
+body,
+html {
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  font-family: Consolas, 'Liberation Mono', Menlo, Courier,
+    monospace;
+}
+#content {
+  text-align: center;
+  font-size: 2rem;
+}
+#increment,
+#decrement {
+  color: black;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 1rem;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  margin-top: 15px;
+  padding: 12px 10px 10px;
+}
+
+textarea {
+  width: 400px;
+  font-size: 1rem;
+  height: 50px;
+}
+textarea#log {
+  height: 100px;
+}
+
+h1 {
+  font-size: 1rem;
+}
+
+video {
+  width: 70%;
+  margin: auto;
+}

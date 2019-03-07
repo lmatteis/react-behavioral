@@ -9,12 +9,15 @@
   "scripts": {
     "start": "parcel index.html --open",
     "build": "parcel build index.html --public-url ./ --out-dir docs",
-    "lib": "parcel build ./src/react-behavioral/index.js --out-dir ./lib"
+    "lib": "parcel build ./src/react-behavioral/index.js --out-dir ./lib",
+    "parcel": "parcel"
   },
   "dependencies": {
-    "react": "16.4.1",
+    "react": "^16.3.0-alpha.1",
     "react-behavioral": "^1.0.9",
+    "react-cache": "^2.0.0-alpha.1",
     "react-dom": "16.4.1",
+    "react-on-screen": "^2.1.1",
     "regenerator-runtime": "0.12.0"
   },
   "devDependencies": {

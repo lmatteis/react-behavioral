@@ -1,0 +1,20 @@
+.App {
+    margin: 0 auto;
+    max-width: 500px;
+    padding: var(--gutter);
+}
+
+.App .back-link {
+    cursor: pointer;
+    font-size: 32px;
+    margin-bottom: var(--gutter);
+    transform: scaleX(-1);
+    text-align: right;
+}
+
+.AppSpinner {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    line-height: 21px;
+}
