@@ -66,22 +66,8 @@ function IndexPage({
   );
 }
 
-export default connectProps(
-  function*() {
-    yield { request: 'fetchMovies' };
-  },
-  function*() {
-    yield { wait: 'fetchMovies' };
-    fetchMovies().then(movies => {
-      this.request({
-        type: 'fetchMoviesSuccess',
-        payload: movies
-      });
-    });
-  },
-  function*() {
-    yield { wait: 'fetchMoviesSuccess' };
-    const movies = this.lastEvent().payload;
-    this.setProps({ movies });
-  }
-)(IndexPage);
+export default connectProps(function*() {
+  yield { wait: 'updateIndexPage' };
+  const movies = this.lastEvent().payload;
+  this.setProps({ movies });
+})(IndexPage);

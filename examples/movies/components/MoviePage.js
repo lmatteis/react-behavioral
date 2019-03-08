@@ -40,7 +40,7 @@ function MovieReview({ quote, critic }) {
   );
 }
 
-function MovieReviews({ movieId, reviews }) {
+function MovieReviews({ movieId, reviews = [] }) {
   return (
     <div className="MovieReviews">
       {reviews.map(review => (
@@ -93,59 +93,23 @@ function MovieDetails(props) {
   );
 }
 
-// <Suspense maxDuration={500} fallback={<Spinner />}>
-//   <MovieReviews movieId={movieId} />
-// </Suspense>
+const MovieReviewsContainer = connectProps(function*() {
+  yield { wait: 'updateReviews' };
+  this.setProps({ reviews: this.lastEvent().payload });
+})(MovieReviews);
+
 function MoviePage({ movieId, ...rest }) {
   return (
     <React.Fragment>
       <MovieDetails movieId={movieId} {...rest} />
+      <MovieReviewsContainer movieId={movieId} />
     </React.Fragment>
   );
 }
 
 const cache = {};
-export default connectProps(
-  function* cacheFetchMovieDetails() {
-    if (cache[this.props.movieId]) {
-      yield {
-        block: event =>
-          event.type === 'fetchMovieDetails' &&
-          event.payload === this.props.movieId
-      };
-    } else {
-      yield { wait: 'fetchMovieDetailsSuccess' };
-      const details = this.lastEvent().payload;
-      cache[details.id] = details;
-    }
-  },
-  function*() {
-    if (cache[this.props.movieId]) {
-      yield {
-        request: {
-          type: 'fetchMovieDetailsSuccess',
-          payload: cache[this.props.movieId]
-        }
-      };
-    }
-  },
-  function*() {
-    yield {
-      request: {
-        type: 'fetchMovieDetails',
-        payload: this.props.movieId
-      }
-    };
-    fetchMovieDetails(this.props.movieId).then(details =>
-      this.request({
-        type: 'fetchMovieDetailsSuccess',
-        payload: details
-      })
-    );
-  },
-  function*() {
-    yield { wait: 'fetchMovieDetailsSuccess' };
-    const details = this.lastEvent().payload;
-    this.setProps(details);
-  }
-)(MoviePage);
+export default connectProps(function*() {
+  yield { wait: 'updateMoviePage' };
+  const details = this.lastEvent().payload;
+  this.setProps(details);
+})(MoviePage);
