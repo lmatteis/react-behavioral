@@ -19,44 +19,53 @@ export default [
         }
       };
     }
-  },
-  // Don't request moviedetails every time
-  function*() {
-    yield { wait: 'fetchMoviesSuccess' };
-    const { payload } = this.lastEvent();
-    // create a thread for each movie that caches its requests
-    payload.forEach(movie => {
-      this.bp.addBThread('', 1, function*() {
-        yield {
-          wait: e =>
-            e.type === 'fetchMovieDetailsSuccess' &&
-            e.payload.id === movie.id
-        };
-        cache[movie.id] = this.lastEvent().payload;
-        yield {
-          block: e =>
-            e.type === 'fetchMovieDetails' &&
-            e.payload === movie.id
-        };
-      });
-      this.bp.addBThread('', 1, function*() {
-        while (true) {
-          yield {
-            wait: e =>
-              e.type === 'CLICKED_MOVIE' &&
-              e.payload === movie.id
-          };
-          yield { wait: 'renderedMoviePage' };
-          if (cache[movie.id]) {
-            yield {
-              request: {
-                type: 'updateMoviePage',
-                payload: cache[movie.id]
-              }
-            };
-          }
-        }
-      });
-    });
   }
+  // Don't request moviedetails every time
+  // function*() {
+  //   yield { wait: 'fetchMoviesSuccess' };
+  //   const { payload } = this.lastEvent();
+  //   // create a thread for each movie that caches its requests
+  //   payload.forEach(movie => {
+  //     this.bp.addBThread('', 1, function*() {
+  //       yield {
+  //         wait: e =>
+  //           e.type === 'fetchMovieDetailsSuccess' &&
+  //           e.payload.id === movie.id
+  //       };
+  //       cache[movie.id] = this.lastEvent().payload;
+  //       yield {
+  //         block: e =>
+  //           e.type === 'fetchMovieDetails' &&
+  //           e.payload === movie.id
+  //       };
+  //     });
+  //     this.bp.addBThread('', 1, function*() {
+  //       while (true) {
+  //         yield {
+  //           wait: e =>
+  //             e.type === 'CLICKED_MOVIE' &&
+  //             e.payload === movie.id
+  //         };
+  //         yield { wait: 'renderedMoviePage' };
+  //         if (cache[movie.id]) {
+  //           yield {
+  //             request: {
+  //               type: 'updateMoviePage',
+  //               payload: cache[movie.id]
+  //             }
+  //           };
+  //         }
+  //       }
+  //     });
+  //   });
+  // },
+  // function*() {
+  //   while (true) {
+  //     yield { wait: 'renderedMoviePage' };
+  //     yield {
+  //       block: 'updateMoviePage',
+  //       wait: 'updateReviews'
+  //     };
+  //   }
+  // }
 ];
