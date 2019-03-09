@@ -109,6 +109,7 @@ function MoviePage({ movieId, ...rest }) {
 
 const cache = {};
 export default connectProps(function*() {
+  yield { request: 'renderedMoviePage' };
   yield { wait: 'updateMoviePage' };
   const details = this.lastEvent().payload;
   this.setProps(details);

@@ -67,6 +67,7 @@ function IndexPage({
 }
 
 export default connectProps(function*() {
+  yield { request: 'renderedIndexPage' };
   yield { wait: 'updateIndexPage' };
   const movies = this.lastEvent().payload;
   this.setProps({ movies });
