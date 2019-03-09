@@ -40,7 +40,10 @@ function MovieReview({ quote, critic }) {
   );
 }
 
-function MovieReviews({ movieId, reviews = [] }) {
+function MovieReviews({ movieId, reviews = [], loading }) {
+  if (loading) {
+    return <Spinner />;
+  }
   return (
     <div className="MovieReviews">
       {reviews.map(review => (
@@ -94,11 +97,18 @@ function MovieDetails(props) {
 }
 
 const MovieReviewsContainer = connectProps(function*() {
+  this.setProps({ loading: true });
   yield { wait: 'updateReviews' };
-  this.setProps({ reviews: this.lastEvent().payload });
+  this.setProps({
+    loading: false,
+    reviews: this.lastEvent().payload
+  });
 })(MovieReviews);
 
-function MoviePage({ movieId, ...rest }) {
+function MoviePage({ movieId, loading, ...rest }) {
+  if (loading) {
+    return <Spinner />;
+  }
   return (
     <React.Fragment>
       <MovieDetails movieId={movieId} {...rest} />
@@ -110,7 +120,8 @@ function MoviePage({ movieId, ...rest }) {
 const cache = {};
 export default connectProps(function*() {
   yield { request: 'renderedMoviePage' };
+  this.setProps({ loading: true });
   yield { wait: 'updateMoviePage' };
   const details = this.lastEvent().payload;
-  this.setProps(details);
+  this.setProps({ loading: false, ...details });
 })(MoviePage);
