@@ -66,7 +66,20 @@ export default [
   },
   function*() {
     while (true) {
-      yield { wait: 'fetchMovieDetailsSuccess' };
+      yield { wait: 'renderedMoviePage' };
+      const movieId = this.lastEvent().payload;
+      yield {
+        wait: [
+          e =>
+            e.type === 'fetchMovieDetailsSuccess' &&
+            e.payload.id === movieId,
+          'CLICKED_BACK'
+        ]
+      };
+      if (this.lastEvent().type === 'CLICKED_BACK') {
+        continue;
+      }
+
       yield {
         request: {
           type: 'updateMoviePage',

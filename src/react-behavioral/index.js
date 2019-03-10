@@ -36,9 +36,17 @@ export const Provider = class extends React.Component {
     let pr = 1;
     this.bp.run();
 
-    threads.forEach(thread =>
-      this.bp.addBThread(``, pr++, thread.bind(this))
-    );
+    threads.forEach(thread => {
+      if (Array.isArray(thread)) {
+        this.bp.addBThread(
+          ``,
+          thread[0],
+          thread[1].bind(this)
+        );
+      } else {
+        this.bp.addBThread(``, pr++, thread.bind(this));
+      }
+    });
   }
   request = event => request.call(this.bp, event);
   bSync = event => bSync.call(this.bp, event);

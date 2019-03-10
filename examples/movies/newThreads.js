@@ -50,19 +50,6 @@ export default [
         };
       }
     }
-  },
-  function*() {
-    while (true) {
-      yield { wait: 'fetchMovieDetails' };
-      yield { wait: 'CLICKED_BACK' };
-      yield {
-        wait: 'fetchMovieDetailsSuccess'
-      };
-      yield {
-        block: 'updateMoviePage',
-        wait: 'CLICKED_MOVIE'
-      };
-    }
   }
   // function*() {
   //   while (true) {
