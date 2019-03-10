@@ -19,46 +19,51 @@ export default [
         }
       };
     }
-  }
+  },
   // Don't request movie details every time
-  // function*() {
-  //   yield { wait: 'fetchMoviesSuccess' };
-  //   const { payload } = this.lastEvent();
-  //   // create a thread for each movie that caches its requests
-  //   payload.forEach(movie => {
-  //     this.bp.addBThread('', 1, function*() {
-  //       yield {
-  //         wait: e =>
-  //           e.type === 'fetchMovieDetailsSuccess' &&
-  //           e.payload.id === movie.id
-  //       };
-  //       cache[movie.id] = this.lastEvent().payload;
-  //       yield {
-  //         block: e =>
-  //           e.type === 'fetchMovieDetails' &&
-  //           e.payload === movie.id
-  //       };
-  //     });
-  //     this.bp.addBThread('', 1, function*() {
-  //       while (true) {
-  //         yield {
-  //           wait: e =>
-  //             e.type === 'CLICKED_MOVIE' &&
-  //             e.payload === movie.id
-  //         };
-  //         yield { wait: 'renderedMoviePage' };
-  //         if (cache[movie.id]) {
-  //           yield {
-  //             request: {
-  //               type: 'updateMoviePage',
-  //               payload: cache[movie.id]
-  //             }
-  //           };
-  //         }
-  //       }
-  //     });
-  //   });
-  // },
+  function*() {
+    while (true) {
+      yield { wait: 'fetchMovieDetailsSuccess' };
+      const { id } = this.lastEvent().payload;
+      // // create a thread for each movie that caches its requests
+      this.bp.addBThread('', 1, function*() {
+        cache[id] = this.lastEvent().payload;
+        yield {
+          block: e =>
+            e.type === 'fetchMovieDetails' &&
+            e.payload === id
+        };
+      });
+    }
+  },
+  function*() {
+    while (true) {
+      yield { wait: 'renderedMoviePage' };
+      const movieId = this.lastEvent().payload;
+
+      if (cache[movieId]) {
+        yield {
+          request: {
+            type: 'updateMoviePage',
+            payload: cache[movieId]
+          }
+        };
+      }
+    }
+  },
+  function*() {
+    while (true) {
+      yield { wait: 'fetchMovieDetails' };
+      yield { wait: 'CLICKED_BACK' };
+      yield {
+        wait: 'fetchMovieDetailsSuccess'
+      };
+      yield {
+        block: 'updateMoviePage',
+        wait: 'CLICKED_MOVIE'
+      };
+    }
+  }
   // function*() {
   //   while (true) {
   //     yield { wait: 'renderedMoviePage' };

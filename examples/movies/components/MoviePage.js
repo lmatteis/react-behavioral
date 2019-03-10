@@ -112,39 +112,49 @@ function MoviePage({ movieId, loading, ...rest }) {
   return (
     <React.Fragment>
       <MovieDetails movieId={movieId} {...rest} />
-      <MovieReviewsContainer movieId={movieId} />
     </React.Fragment>
   );
 }
 
+// <MovieReviewsContainer movieId={movieId} />
 const cache = {};
 export default connectProps(
   function*() {
-    yield { request: 'renderedMoviePage' };
+    yield {
+      request: {
+        type: 'renderedMoviePage',
+        payload: this.props.movieId
+      }
+    };
     this.setProps({ loading: true });
     yield { wait: 'updateMoviePage' };
     const details = this.lastEvent().payload;
     this.setProps({ loading: false, ...details });
-  },
-  function*() {
-    yield { wait: 'fetchMovieDetailsSuccess' };
-    cache[this.props.movieId] = this.lastEvent().payload;
-    yield {
-      block: e =>
-        e.type === 'fetchMovieDetails' &&
-        e.payload === this.props.movieId
-    };
-  },
-  function*() {
-    yield { wait: 'CLICKED_MOVIE' };
-    yield { wait: 'renderedMoviePage' };
-    if (cache[this.props.movieId]) {
-      yield {
-        request: {
-          type: 'updateMoviePage',
-          payload: cache[this.props.movieId]
-        }
-      };
-    }
   }
+  // function*() {
+  //   yield { wait: 'renderedMoviePage' };
+  //   yield {
+  //     wait: e =>
+  //       e.type === 'fetchMovieDetailsSuccess' &&
+  //       e.payload.id === movieId
+  //   };
+  //   const movieId = this.lastEvent().payload.id;
+  //   cache[movieId] = this.lastEvent().payload;
+  //   yield {
+  //     block: e =>
+  //       e.type === 'fetchMovieDetails' &&
+  //       e.payload === movieId
+  //   };
+  // },
+  // function*() {
+  //   yield { wait: 'renderedMoviePage' };
+  //   if (cache[this.props.movieId]) {
+  //     yield {
+  //       request: {
+  //         type: 'updateMoviePage',
+  //         payload: cache[this.props.movieId]
+  //       }
+  //     };
+  //   }
+  // }
 )(MoviePage);

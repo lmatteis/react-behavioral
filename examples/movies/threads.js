@@ -41,14 +41,26 @@ export default [
         request: {
           type: 'fetchMovieDetails',
           payload: this.lastEvent().payload
-        }
+        },
+        wait: 'CLICKED_BACK'
       };
+    }
+  },
+  function*() {
+    while (true) {
+      yield { wait: 'fetchMovieDetails' };
       fetchMovieDetails(this.lastEvent().payload).then(
-        details =>
-          this.request({
-            type: 'fetchMovieDetailsSuccess',
-            payload: details
-          })
+        details => {
+          this.bp.addBThread('', 1, function*() {
+            yield {
+              request: {
+                type: 'fetchMovieDetailsSuccess',
+                payload: details
+              }
+            };
+          });
+          this.bp.run();
+        }
       );
     }
   },
@@ -62,35 +74,35 @@ export default [
         }
       };
     }
-  },
-  function*() {
-    while (true) {
-      yield { wait: 'CLICKED_MOVIE' };
-      yield {
-        request: {
-          type: 'fetchMovieReviews',
-          payload: this.lastEvent().payload
-        }
-      };
-      fetchMovieReviews(this.lastEvent().payload).then(
-        reviews => {
-          this.request({
-            type: 'fetchMovieReviewsSuccess',
-            payload: reviews
-          });
-        }
-      );
-    }
-  },
-  function*() {
-    while (true) {
-      yield { wait: 'fetchMovieReviewsSuccess' };
-      yield {
-        request: {
-          type: 'updateReviews',
-          payload: this.lastEvent().payload
-        }
-      };
-    }
   }
+  // function*() {
+  //   while (true) {
+  //     yield { wait: 'CLICKED_MOVIE' };
+  //     yield {
+  //       request: {
+  //         type: 'fetchMovieReviews',
+  //         payload: this.lastEvent().payload
+  //       }
+  //     };
+  //     fetchMovieReviews(this.lastEvent().payload).then(
+  //       reviews => {
+  //         this.request({
+  //           type: 'fetchMovieReviewsSuccess',
+  //           payload: reviews
+  //         });
+  //       }
+  //     );
+  //   }
+  // },
+  // function*() {
+  //   while (true) {
+  //     yield { wait: 'fetchMovieReviewsSuccess' };
+  //     yield {
+  //       request: {
+  //         type: 'updateReviews',
+  //         payload: this.lastEvent().payload
+  //       }
+  //     };
+  //   }
+  // }
 ];
