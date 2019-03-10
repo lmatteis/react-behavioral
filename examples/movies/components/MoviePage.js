@@ -118,10 +118,33 @@ function MoviePage({ movieId, loading, ...rest }) {
 }
 
 const cache = {};
-export default connectProps(function*() {
-  yield { request: 'renderedMoviePage' };
-  this.setProps({ loading: true });
-  yield { wait: 'updateMoviePage' };
-  const details = this.lastEvent().payload;
-  this.setProps({ loading: false, ...details });
-})(MoviePage);
+export default connectProps(
+  function*() {
+    yield { request: 'renderedMoviePage' };
+    this.setProps({ loading: true });
+    yield { wait: 'updateMoviePage' };
+    const details = this.lastEvent().payload;
+    this.setProps({ loading: false, ...details });
+  },
+  function*() {
+    yield { wait: 'fetchMovieDetailsSuccess' };
+    cache[this.props.movieId] = this.lastEvent().payload;
+    yield {
+      block: e =>
+        e.type === 'fetchMovieDetails' &&
+        e.payload === this.props.movieId
+    };
+  },
+  function*() {
+    yield { wait: 'CLICKED_MOVIE' };
+    yield { wait: 'renderedMoviePage' };
+    if (cache[this.props.movieId]) {
+      yield {
+        request: {
+          type: 'updateMoviePage',
+          payload: cache[this.props.movieId]
+        }
+      };
+    }
+  }
+)(MoviePage);

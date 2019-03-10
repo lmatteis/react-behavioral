@@ -1,6 +1,6 @@
 const cache = {};
 export default [
-  // Don't request IndexPage everytime
+  // Don't request IndexPage every time
   function*() {
     yield { wait: 'fetchMoviesSuccess' };
     yield { block: 'fetchMovies' };
@@ -20,7 +20,7 @@ export default [
       };
     }
   }
-  // Don't request moviedetails every time
+  // Don't request movie details every time
   // function*() {
   //   yield { wait: 'fetchMoviesSuccess' };
   //   const { payload } = this.lastEvent();
