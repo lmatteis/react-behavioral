@@ -112,6 +112,10 @@ function MoviePage({ movieId, loading, ...rest }) {
   return (
     <React.Fragment>
       <MovieDetails movieId={movieId} {...rest} />
+      <MovieReviews
+        movieId={movieId}
+        reviews={rest.reviews && rest.reviews.reviews}
+      />
     </React.Fragment>
   );
 }
@@ -119,10 +123,7 @@ function MoviePage({ movieId, loading, ...rest }) {
 // <MovieReviewsContainer movieId={movieId} />
 export default connectProps(function*() {
   yield {
-    request: {
-      type: 'renderedMoviePage',
-      payload: this.props.movieId
-    }
+    request: 'renderedMoviePage'
   };
   this.setProps({ loading: true });
   yield { wait: 'updateMoviePage' };

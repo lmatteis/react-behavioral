@@ -47,8 +47,12 @@ function Movie({
 function IndexPage({
   onMovieClick,
   loadingMovieId,
-  movies = []
+  movies = [],
+  loading
 }) {
+  if (loading) {
+    return <Spinner />;
+  }
   return (
     <div className="IndexPage">
       <h1>Top Box Office</h1>
@@ -66,9 +70,20 @@ function IndexPage({
   );
 }
 
-export default connectProps(function*() {
-  yield { request: 'renderedIndexPage' };
-  yield { wait: 'updateIndexPage' };
-  const movies = this.lastEvent().payload;
-  this.setProps({ movies });
-})(IndexPage);
+export default connectProps(
+  function*() {
+    yield { request: 'renderedIndexPage' };
+    this.setProps({ loading: true });
+    yield { wait: 'updateIndexPage' };
+    const movies = this.lastEvent().payload;
+    this.setProps({ movies, loading: false });
+  },
+  function*() {
+    while (true) {
+      yield { wait: 'CLICKED_MOVIE' };
+      this.setProps({
+        loadingMovieId: this.lastEvent().payload
+      });
+    }
+  }
+)(IndexPage);

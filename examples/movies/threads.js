@@ -66,18 +66,35 @@ export default [
   },
   function*() {
     while (true) {
-      yield { wait: 'renderedMoviePage' };
-      const movieId = this.lastEvent().payload;
+      yield { wait: 'CLICKED_MOVIE' };
+      let movieId = this.lastEvent().payload;
       yield {
         wait: [
           e =>
             e.type === 'fetchMovieDetailsSuccess' &&
             e.payload.id === movieId,
-          'CLICKED_BACK'
+          'CLICKED_BACK',
+          'CLICKED_MOVIE'
         ]
       };
-      if (this.lastEvent().type === 'CLICKED_BACK') {
-        continue;
+      if (this.lastEvent().type === 'CLICKED_MOVIE') {
+        while (true) {
+          movieId = this.lastEvent().payload;
+          console.log('enter new while', movieId);
+          yield {
+            wait: [
+              e =>
+                e.type === 'fetchMovieDetailsSuccess' &&
+                e.payload.id === movieId,
+              'CLICKED_MOVIE'
+            ]
+          };
+          if (this.lastEvent().type === 'CLICKED_MOVIE') {
+            continue;
+          } else {
+            break;
+          }
+        }
       }
 
       yield {
