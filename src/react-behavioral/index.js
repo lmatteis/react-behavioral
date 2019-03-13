@@ -94,8 +94,10 @@ class ComponentPropsWithThread extends React.Component {
   constructor(props) {
     super(props);
     this.state = props;
+    this.mount = false;
   }
   componentDidMount() {
+    this.mount = true;
     // Context value is this.props.bp
     const { bp, threads, priority } = this.props;
     let pr = 1;
@@ -110,13 +112,18 @@ class ComponentPropsWithThread extends React.Component {
     this.bp = bp;
   }
 
+  componentWillUnmount() {
+    this.mount = false;
+  }
+
   componentDidUpdate(prevProps, prevState) {
     // Previous Context value is prevProps.bp
     // New Context value is this.props.bp
   }
 
   // updateView = view => this.setState({ view });
-  setProps = this.setState;
+  setProps = (...props) =>
+    this.mount && this.setState(...props);
   request = event => request.call(this.props.bp, event);
   bSync = event => bSync.call(this.props.bp, event);
   lastEvent = () => this.props.bp.lastEvent;
