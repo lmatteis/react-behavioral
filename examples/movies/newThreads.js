@@ -38,7 +38,7 @@ export default [
   },
   function*() {
     while (true) {
-      yield { wait: 'renderedMoviePage' };
+      yield { wait: 'CLICKED_MOVIE' };
       const movieId = this.lastEvent().payload;
 
       if (cache[movieId]) {
@@ -49,6 +49,19 @@ export default [
           }
         };
       }
+    }
+  },
+  function*() {
+    let payload;
+    while (true) {
+      yield {
+        wait: 'updateMoviePage'
+      };
+      payload = this.lastEvent().payload;
+      yield { wait: 'renderedMoviePage' };
+      yield {
+        request: { type: 'updateMoviePage', payload }
+      };
     }
   }
   // function*() {

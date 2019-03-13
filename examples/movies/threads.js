@@ -96,6 +96,9 @@ export default [
           }
         }
       }
+      if (this.lastEvent().type === 'CLICKED_BACK') {
+        continue;
+      }
 
       yield {
         request: {

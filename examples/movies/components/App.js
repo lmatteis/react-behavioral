@@ -63,8 +63,8 @@ export default connect(function*() {
       />
     );
 
+    yield { wait: 'CLICKED_MOVIE' };
     yield { wait: 'updateMoviePage' };
-    const movie = this.lastEvent().payload;
     this.updateView(
       <App
         onMovieClick={onMovieClick}
@@ -72,9 +72,6 @@ export default connect(function*() {
         showDetail={true}
       />
     );
-    yield {
-      request: { type: 'updateMoviePage', payload: movie }
-    };
     yield { wait: 'CLICKED_BACK' };
   }
 });
