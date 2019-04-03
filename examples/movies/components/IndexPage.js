@@ -24,11 +24,14 @@ function Movie({
   popcornScore,
   theaterReleaseDate,
   loading,
+  highlight,
   onClick
 }) {
   return (
     <div
-      className={`Movie box ${loading ? 'loading' : ''}`}
+      className={`Movie box ${loading ? 'loading' : ''} ${
+        highlight ? 'highlight' : ''
+      }`}
       onClick={() => onClick(id)}
     >
       <div className="content">
@@ -47,6 +50,7 @@ function Movie({
 function IndexPage({
   onMovieClick,
   loadingMovieId,
+  highlightMovieId,
   movies = [],
   loading
 }) {
@@ -62,6 +66,7 @@ function IndexPage({
             key={infos.id}
             {...infos}
             loading={infos.id === loadingMovieId}
+            highlight={infos.id === highlightMovieId}
             onClick={onMovieClick}
           />
         ))}
@@ -76,13 +81,24 @@ export default connectProps(
     this.setProps({ loading: true });
     yield { wait: 'updateIndexPage' };
     const movies = this.lastEvent().payload;
-    this.setProps({ movies, loading: false });
+    this.setProps({ movies, loading: false }, () =>
+      this.request('indexPageMoviesLoaded')
+    );
   },
   function*() {
     while (true) {
       yield { wait: 'CLICKED_MOVIE' };
       this.setProps({
         loadingMovieId: this.lastEvent().payload
+      });
+    }
+  },
+  function*() {
+    while (true) {
+      yield { request: 'renderedIndexPage' };
+      const { payload } = yield { wait: 'highlightMovie' };
+      this.setProps({
+        highlightMovieId: payload.id
       });
     }
   }

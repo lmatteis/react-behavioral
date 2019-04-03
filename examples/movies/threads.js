@@ -4,6 +4,8 @@ import {
   fetchMovieReviews
 } from './api';
 
+let lastScrollY = 0;
+
 export default [
   function* log() {
     while (true) {
@@ -105,6 +107,33 @@ export default [
           type: 'updateMoviePage',
           payload: this.lastEvent().payload
         }
+      };
+    }
+  },
+  function*() {
+    while (true) {
+      yield { wait: 'updateMoviePage' };
+      window.scrollTo(0, 0);
+    }
+  },
+  function*() {
+    while (true) {
+      yield { wait: 'fetchMovieDetailsSuccess' };
+      lastScrollY = window.scrollY;
+    }
+  },
+  function*() {
+    while (true) {
+      yield { wait: 'indexPageMoviesLoaded' };
+      window.scrollTo(0, lastScrollY);
+    }
+  },
+  function*() {
+    while (true) {
+      const { payload } = yield { wait: 'updateMoviePage' };
+      yield { wait: 'renderedIndexPage' };
+      yield {
+        request: { type: 'highlightMovie', payload }
       };
     }
   }
