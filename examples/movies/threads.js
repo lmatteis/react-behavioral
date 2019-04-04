@@ -110,24 +110,24 @@ export default [
       };
     }
   },
-  function*() {
-    while (true) {
-      yield { wait: 'updateMoviePage' };
-      window.scrollTo(0, 0);
-    }
-  },
-  function*() {
-    while (true) {
-      yield { wait: 'fetchMovieDetailsSuccess' };
-      lastScrollY = window.scrollY;
-    }
-  },
-  function*() {
-    while (true) {
-      yield { wait: 'indexPageMoviesLoaded' };
-      window.scrollTo(0, lastScrollY);
-    }
-  },
+  // function*() {
+  //   while (true) {
+  //     yield { wait: 'updateMoviePage' };
+  //     window.scrollTo(0, 0);
+  //   }
+  // },
+  // function*() {
+  //   while (true) {
+  //     yield { wait: 'fetchMovieDetailsSuccess' };
+  //     lastScrollY = window.scrollY;
+  //   }
+  // },
+  // function*() {
+  //   while (true) {
+  //     yield { wait: 'indexPageMoviesLoaded' };
+  //     window.scrollTo(0, lastScrollY);
+  //   }
+  // },
   function*() {
     while (true) {
       const { payload } = yield { wait: 'updateMoviePage' };
@@ -136,7 +136,7 @@ export default [
         request: { type: 'highlightMovie', payload }
       };
     }
-  }
+  },
   // function*() {
   //   while (true) {
   //     yield { wait: 'CLICKED_MOVIE' };
@@ -167,4 +167,56 @@ export default [
   //     };
   //   }
   // }
+  function*() {
+    while (true) {
+      yield { wait: 'renderedMoviePage' };
+      yield { wait: 'updateMoviePage' };
+      yield { request: 'scrollTopTop' };
+      window.scrollTo(0, 0);
+    }
+  },
+  function*() {
+    let lastScrollY;
+    while (true) {
+      yield { wait: 'CLICKED_MOVIE' };
+      lastScrollY = window.scrollY;
+      yield { wait: 'CLICKED_BACK' };
+      yield { wait: 'indexPageMoviesLoaded' };
+      yield { request: 'setScrollYonIndexPage' };
+      window.scrollTo(0, lastScrollY);
+    }
+  },
+  function*() {
+    let highlightMovieIds = [];
+    while (true) {
+      const { payload } = yield {
+        wait: 'fetchMovieDetailsSuccess'
+      };
+      highlightMovieIds.push(payload.id);
+      yield {
+        request: {
+          type: 'highlightMovieIds',
+          payload: highlightMovieIds
+        }
+      };
+    }
+  },
+  function*() {
+    let highlightMovieIds = [];
+    while (true) {
+      const { payload } = yield {
+        wait: ['highlightMovieIds', 'CLICKED_BACK']
+      };
+      if (this.lastEvent().type === 'highlightMovieIds') {
+        highlightMovieIds = payload;
+      }
+      yield { wait: 'renderedIndexPage' };
+      yield {
+        request: {
+          type: 'highlightMovieIds',
+          payload: highlightMovieIds
+        }
+      };
+    }
+  }
 ];

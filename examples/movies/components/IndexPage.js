@@ -50,7 +50,7 @@ function Movie({
 function IndexPage({
   onMovieClick,
   loadingMovieId,
-  highlightMovieId,
+  highlightMovieIds = [],
   movies = [],
   loading
 }) {
@@ -66,7 +66,9 @@ function IndexPage({
             key={infos.id}
             {...infos}
             loading={infos.id === loadingMovieId}
-            highlight={infos.id === highlightMovieId}
+            highlight={highlightMovieIds.find(
+              id => id === infos.id
+            )}
             onClick={onMovieClick}
           />
         ))}
@@ -96,9 +98,11 @@ export default connectProps(
   function*() {
     while (true) {
       yield { request: 'renderedIndexPage' };
-      const { payload } = yield { wait: 'highlightMovie' };
+      const { payload } = yield {
+        wait: 'highlightMovieIds'
+      };
       this.setProps({
-        highlightMovieId: payload.id
+        highlightMovieIds: payload
       });
     }
   }
