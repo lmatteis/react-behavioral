@@ -232,7 +232,7 @@ const preventCompletionOfLineWithTwoXs = generateThreads(
 
 export default () => (
   <React.Fragment>
-    <h2>react-behavioral</h2>
+    <h2>Behavioral Programming</h2>
     <pre>
       October 10, 2018
       <br />
@@ -245,9 +245,11 @@ export default () => (
         #BehavioralProgramming
       </a>{' '}
       is a paradigm that was coined by David Harel, Assaf
-      Marron and Gera Weiss (<a href="http://www.wisdom.weizmann.ac.il/~amarron/BP%20-%20CACM%20-%20Author%20version.pdf">
+      Marron and Gera Weiss (
+      <a href="http://www.wisdom.weizmann.ac.il/~amarron/BP%20-%20CACM%20-%20Author%20version.pdf">
         paper
-      </a>).
+      </a>
+      ).
     </p>
     <p>
       It's a different way of programming that is more
@@ -475,9 +477,11 @@ function* detectWinByX() {
         conditions only, and are not concerned with issues
         irrelevant to that purpose (such as the enforcement
         of alternating turns, or the choice of an opening
-        move). (<a href="https://www.cs.bgu.ac.il/~geraw/Publications_files/BPJECOOP.pdf">
+        move). (
+        <a href="https://www.cs.bgu.ac.il/~geraw/Publications_files/BPJECOOP.pdf">
           paper
-        </a>)
+        </a>
+        )
       </blockquote>
     </p>
     <h3>EnforcePlayerTurns</h3>
@@ -885,7 +889,8 @@ const Cell = connect(ReactCell);
       these concepts{' '}
       <a href="https://lmatteis.github.io/behavioral-programming-talk/index.html">
         here
-      </a>.
+      </a>
+      .
     </p>
   </React.Fragment>
 );

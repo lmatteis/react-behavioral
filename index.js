@@ -9,13 +9,7 @@ import BakeryComplex from './examples/bakery/bakery';
 
 ReactDOM.render(
   <React.Fragment>
-    {
-      {
-        '/bakery': <Bakery />,
-        '/bakery-complex': <BakeryComplex />,
-        '/': <TicTacToeGame />
-      }[window.location.pathname]
-    }
+    <TicTacToeGame />
   </React.Fragment>,
   document.getElementById('content')
 );
